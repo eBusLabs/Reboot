@@ -1,0 +1,25 @@
+{% extends "base/base.html" %}
+{% block title %}Logon{% endblock %}
+{% block style %}
+    <link href="{{ STATIC_URL }}custom/css/signin.css" rel="stylesheet">
+{% endblock %}
+{% block body %}
+ <div class="formwidth">
+    <form class="form-horizontal" method="POST" action="">
+        {% csrf_token %}
+        <h2 class="form-signin-heading margin10">Please sign in</h2>
+        {% for field in form %}
+           <div class="form-group">
+           <label for="{{ field.id_for_label }}" class="control-label col-xs-4">{{ field.label }}</label>
+           <div class="col-xs-8">
+               {{ field }}
+           </div>
+        </div>
+        {% endfor %}
+        <div class="row col-xs-offset-4 margin10">
+            <input type="checkbox" value="remember-me"> Remember me
+        </div>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
+    </form> <!-- form-signin -->
+</div> <!-- /container -->
+{% endblock %}

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>{% block title %} {% endblock %} </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Bootstrap Style in this page -->
+    <link href="{{ STATIC_URL }}bs/css/bootstrap-theme.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}bs/css/bootstrap.css" rel="stylesheet">
+    <!-- Bootstrap Script in this page -->
+    <script src="{{ STATIC_URL }}bs/js/jquery.js"></script>
+    <script src="{{ STATIC_URL }}bs/js/bootstrap.min.js"></script>
+    {% block favicon %}
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="{{ STATIC_URL }}icons/fav/favicon.ico" />
+    {% endblock %}
+    {% block style %} {% endblock %}
+    {% block script %} {% endblock %}
+</head>
+<body>
+    {% block body %} {% endblock %}
+</body>
+</html>

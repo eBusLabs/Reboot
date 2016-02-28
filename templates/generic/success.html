@@ -1,0 +1,20 @@
+{% extends "base/base.html" %}
+{% block title %}{% endblock %}
+{% block style %}
+<link href="{{ STATIC_URL }}custom/css/msg.css" rel="stylesheet">
+{% endblock %}
+{% block script %}
+{% endblock %}
+{% block body %}
+<div id="w">
+    <div id="content">
+      <div class="notify successbox">
+        <h1>Success!</h1>
+        <span class="alerticon"><img src="{{ STATIC_URL }}icons/msgs/check.png" alt="checkmark" /></span>
+        <span style="text-align: center;"><p>{{ msg }}</p></span>
+        <a href= "{{ url }}" class="btn btn-success btn-md" style="display: inherit;">
+        <span class="glyphicon glyphicon-home"></span>{{ bt }}</a> 
+      </div>  
+    </div><!-- @end #content -->
+  </div><!-- @end #w -->
+{% endblock %}

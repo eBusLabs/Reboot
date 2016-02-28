@@ -1,0 +1,79 @@
+{% extends "base/base.html" %}
+{% block title %}User Registration{% endblock %}
+{% block style %}
+<style>
+body {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  background-color: #eee;
+}
+
+.formwidth {
+  max-width: 600px;
+  padding: 15px;
+  margin: 0 auto;
+}
+
+.margin10 {
+  padding:10px;
+}
+
+</style>
+
+{% endblock %}
+{% block script %}
+<script>
+
+</script>
+{% endblock %}
+{% block body %}
+<div class="formwidth">
+<h2><span class="label label-default" style="display:block">Registration Form</span></h2>
+<form class="form-horizontal margin10" method="POST" action="">
+    {% csrf_token %}
+    {% if form.errors %}
+        <div class="row">
+        <p style="color: orange; font-size:large;" class="col-xs-8, col-xs-offset-4">
+          Please correct the error{{ form.errors|pluralize }} below.</p>
+        </div>
+    {% endif %}
+    {% if not pwdmatch %}
+        <div class="row">
+        <p style="color: red; font-size:medium;" class="col-xs-8, col-xs-offset-4">
+          Password do not match.</p>
+        </div>
+    {% endif %}
+    {% if usrexist %}
+        <div class="row">
+        <p style="color: red; font-size:medium;" class="col-xs-8, col-xs-offset-4">
+           User already exist.</p>
+        </div>
+    {% endif %}
+    {% if emailexist %}
+        <div class="row">
+        <p style="color: red; font-size:medium;" class="col-xs-8, col-xs-offset-4">
+           Email already exist.</p>
+        </div>
+    {% endif %}
+    {% for field in form %}
+        {% if field.errors %}
+            <span class="control-label col-xs-8, col-xs-offset-4" style="color: red;">
+                {{ field.errors }}
+            </span>
+        {% endif %}
+        <div class="form-group">
+           <label for="{{ field.id_for_label }}" class="control-label col-xs-4">{{ field.label }}</label>
+           <div class="col-xs-8">
+               {{ field }}
+           </div>
+        </div>
+    {% endfor %}
+ 
+	<div class="form-group">
+		<div class="col-xs-offset-4 col-xs-8">
+			<button type="submit" class="btn btn-primary">Register Me</button>
+		</div>
+	</div>
+</form>
+</div>
+{% endblock %}
