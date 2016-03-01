@@ -9,7 +9,7 @@
 *.sqlite3
 # don't push these folder
 __pycache__
-migrations
+#migrations
 
 # OS generated files #
 ######################
@@ -21,3 +21,6 @@ migrations
 .settings
 ehthumbs.db
 Thumbs.db
+
+#
+!debug.log

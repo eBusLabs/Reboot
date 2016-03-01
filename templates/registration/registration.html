@@ -17,19 +17,15 @@ body {
 .margin10 {
   padding:10px;
 }
-
 </style>
-
 {% endblock %}
 {% block script %}
-<script>
-
-</script>
+  <script src="{{ STATIC_URL }}custom/js/register.js"></script>
 {% endblock %}
 {% block body %}
 <div class="formwidth">
 <h2><span class="label label-default" style="display:block">Registration Form</span></h2>
-<form class="form-horizontal margin10" method="POST" action="">
+<form class="form-horizontal margin10" method="POST" action="" id="regform">
     {% csrf_token %}
     {% if form.errors %}
         <div class="row">
@@ -71,7 +67,7 @@ body {
  
 	<div class="form-group">
 		<div class="col-xs-offset-4 col-xs-8">
-			<button type="submit" class="btn btn-primary">Register Me</button>
+			<button type="submit" class="btn btn-primary"  id="formButton">Register Me</button>
 		</div>
 	</div>
 </form>
