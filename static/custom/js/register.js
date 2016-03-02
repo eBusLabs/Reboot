@@ -1,57 +1,56 @@
-/*function checkUserName(element) {
-	var a = element.value
-	var id = "#".concat(element.id);
-	if (a.length < 4 || a.length > 30) {
-		//disable other input
-		$("input").prop("disabled",true);
-		//Enable current input
-		//$(id).get(0).setCustomValidity('Passwords must match');
-		$(id).prop("disabled", false);
-		$(element).attr("style","background-color: #9F6000;");
-		$(element).attr("data-toggle","tooltip");
-		$(element).attr("title","User ID must be between 4 and 30 characters");
+$(document).ready(function() {
+	//Handle form submission
+	$("#regform").submit(function(event) {
+		var uidOk = checkUserId();
+		var pwdOk = checkPassword();
+		if (uidOk && pwdOk) {
+			return;
+		} else {
+			event.preventDefault();
+		}
+	});
+	$("#id_user_name").focus(function() {
+		$("#id_user_name").tooltip("hide");
+	});
+	$("#id_passworda").focus(function() {
+		$("#id_passworda").tooltip("hide");
+	});
+	$("#id_passwordb").focus(function() {
+		$("#id_passwordb").tooltip("hide");
+	});
+});
+
+function checkUserId() {
+	var userId = $("#id_user_name").val();
+	if (userId.length < 4 || userId.length > 30) {
+		$("#id_user_name").tooltip({trigger:"manual", title:"UserId must be between 4 and 30 character",placement:"top"});
+		$("#id_user_name").tooltip("show");
+		return false;
 	} else {
-		$("input").prop("disabled",false);
-		$(element).removeAttr("style");
-		$(element).removeAttr("data-toggle");
-		$(element).removeAttr("title");
+		$("#id_user_name").tooltip("hide");
+		return true;
 	}
 }
 
-$(document).ready(function() {
-	
-	//Fucntion handling individual text box
-	$("input").focusout(function() {
-		var id = $(this).attr("id");
+function checkPassword() {
+	var pwdA = $("#id_passworda").val();
+	var pwdB = $("#id_passwordb").val();
+	if (pwdA === pwdB) {
+		//check length
+		$("#id_passwordb").tooltip("hide");
+		if (pwdA.length > 3) {
+			$("#id_passworda").tooltip("hide");
+			return true;
+		} else {
+			$("#id_passworda").tooltip({trigger:"manual", title:"Password must be greater than 3 character",placement:"top"});
+			$("#id_passworda").tooltip("show");
+			return false;
+		}
+	} else {
+		$("#id_passwordb").tooltip({trigger:"manual", title:"Password don't match.",placement:"top"});
+		$("#id_passwordb").tooltip("show");
+		return false;
+	}
+}
 
-		switch (id) {
-		case "id_user_name":
-			checkUserName(this);
-			break;
-		case "id_first_name":
-			break;
-		case "id_last_name":
-			break;
-		case "id_email":
-			break;
-		case "id_passworda":
-			break;
-		case "id_passwordb":
-			break;
-		default:
-			//
-		}
-	});
-	
-	//fucntion handling click of button
-	$("#formButton").click(function(e) { // using click function
-		// on contact form submit button
-		e.preventDefault(); // stop form from submitting right away
-		var error = false;
-		if (!error) { // if not any errors
-			$("#formButton").submit(); // you submit form
-		}
-	});
-	
-	
-});*/
+
