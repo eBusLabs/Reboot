@@ -1,0 +1,15 @@
+body {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  background-color: #eee;
+}
+
+.formwidth {
+  max-width: 520px;
+  padding: 15px;
+  margin: 0 auto;
+}
+
+.margin10 {
+  padding:10px;
+}

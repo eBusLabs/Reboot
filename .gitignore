@@ -7,6 +7,7 @@
 *.class
 *.log
 *.sqlite3
+*.tern-project
 # don't push these folder
 __pycache__
 #migrations

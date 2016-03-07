@@ -1,3 +1,4 @@
+//include generic js
 $(document).ready(function() {
 	//Handle form submission
 	$("#regform").submit(function(event) {

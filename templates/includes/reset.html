@@ -1,1 +1,72 @@
-<h1>todo :password reset here</h1>
+<link href="{{ STATIC_URL }}custom/css/reset.css" rel="stylesheet">
+<script src="{{ STATIC_URL }}custom/js/resetpwd.js"></script>
+{% if pwdcs %}
+    {% ifequal pwdcs "Y" %}
+        <div class="container alert alert-success col-md-4 col-xs-6 col-md-offset-3" role="alert" style="text-align: center;margin-top: 10%">
+            <strong>Success!</strong> Password changed successfully.
+        </div>
+    {% endifequal %}
+    {% ifequal pwdcs "N" %}
+        <div class="container alert alert-success col-md-4 col-xs-6 col-md-offset-3" role="alert" style="text-align: center;margin-top: 10%">
+            <strong>Failure!</strong> Technical Failure.
+        </div>
+    {% endifequal %}    
+{% else %}
+<form method="POST" action="" id="resetform">
+{% csrf_token %}
+<div class="container bootstrap snippet" style="margin-top: 20px">
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-6 col-md-offset-2">
+        <div class="panel panel-primary">
+                <!-- Panel Heading Div -->
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        <span class="glyphicon glyphicon-th"></span>
+                        Change Password   
+                    </h3>
+                </div>
+                
+                <!-- Panel Body Div -->
+                <div class="panel-body">
+                {% if errmsgs %}
+                <div class="alert alert-danger col-md-7" role="alert" style="padding: 5px;margin-bottom: -20px">
+                {% for error in errmsgs %}
+                        {{ error }}<br>
+                {% endfor %}
+                 </div>
+                {% endif %}
+                    <div style="margin-top:40px;" class="col-xs-6 col-sm-6 col-md-6 login-box">
+                    <div class="row">
+                        <!-- Form fields -->
+                        {% for field in form %}
+                        <!-- If this field has error  -->
+                        {% if field.errors %}
+                            {{ field.errors }}
+                        {% endif %}
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></div>
+                                 {{ field }}
+                            </div>
+                        </div>
+                        {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Panel Footer Body -->
+                <div class="panel-footer" style="margin-top: 30px">
+                    <div class="row">
+                        <div class="col-xs-6 col-sm-6 col-md-6"></div>
+                        <div class="col-xs-6 col-sm-6 col-md-6">
+                            <button class="btn icon-btn-save btn-success" type="submit">
+                            <span class="btn-save-label"><i class="glyphicon glyphicon-floppy-disk"></i></span>Save</button>
+                        </div>
+                    </div>
+               </div>
+        </div>
+    </div>
+</div>
+</div>
+</form>
+{% endif %}

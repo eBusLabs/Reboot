@@ -14,41 +14,31 @@
 {% endif %}
 </div>
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main" style="margin-top: 10px">
-<!-- User Home Division -->
 {% ifequal action "home" %}
 {% include "includes/usrhome.html" %}
 {% endifequal %}
-<!-- User Lastpoll Division -->
 {% ifequal action "lastpoll" %}
 {% include "includes/lastpolls.html" %}
 {% endifequal %}
-<!-- User Profile Division -->
 {% ifequal action "profile" %}
 {% include "includes/profile.html" %}
 {% endifequal %}
-<!-- User Setting Division -->
 {% ifequal action "setting" %}
 {% include "includes/setting.html" %}
 {% endifequal %}
-<!-- User Password Division -->
 {% ifequal action "resetpwd" %}
 {% include "includes/reset.html" %}
 {% endifequal %}
 
-<!-- Admin views -->
-<!-- Create Poll -->
 {% ifequal action "addpoll" %}
 {% include "includes/addpoll.html" %}
 {% endifequal %}
-<!-- Current Polls -->
 {% ifequal action "currpoll" %}
 {% include "includes/currpoll.html" %}
 {% endifequal %}
-<!-- All Polls -->
 {% ifequal action "allpoll" %}
 {% include "includes/allpoll.html" %}
 {% endifequal %}
-<!-- Create Poll -->
 {% ifequal action "delpoll" %}
 {% include "includes/delpoll.html" %}
 {% endifequal %}

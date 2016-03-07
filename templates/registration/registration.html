@@ -1,26 +1,10 @@
 {% extends "base/base.html" %}
 {% block title %}User Registration{% endblock %}
 {% block style %}
-<style>
-body {
-  padding-top: 20px;
-  padding-bottom: 20px;
-  background-color: #eee;
-}
-
-.formwidth {
-  max-width: 600px;
-  padding: 15px;
-  margin: 0 auto;
-}
-
-.margin10 {
-  padding:10px;
-}
-</style>
+<link href="{{ STATIC_URL }}custom/css/register.css" rel="stylesheet">
 {% endblock %}
 {% block script %}
-  <script src="{{ STATIC_URL }}custom/js/register.js"></script>
+<script src="{{ STATIC_URL }}custom/js/register.js"></script>
 {% endblock %}
 {% block body %}
 <div class="formwidth">
