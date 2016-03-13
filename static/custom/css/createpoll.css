@@ -1,0 +1,43 @@
+.pollName {
+	background-color: #8B8E80;
+	color: white;
+}
+
+.question {
+	background-color: #8BB1B3;
+	color: white;
+	font-style: italic;
+}
+
+.options {
+    background-color: #F4FFCB;
+    color: black;	
+}
+
+.addOption {
+-webkit-appearance: none;
+outline: none;
+border: 0;
+background: transparent;	
+}
+.removeOption {
+-webkit-appearance: none;
+outline: none;
+border: 0;
+background: transparent;    	
+}
+
+.removeQuestion {
+-webkit-appearance: none;
+outline: none;
+border: 0;
+background: transparent;        
+}
+
+.addOnWidth1 {
+min-width:100px;
+text-align:right;
+}
+
+.addOnWidth2 {
+}
