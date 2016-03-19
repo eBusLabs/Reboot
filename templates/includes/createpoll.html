@@ -1,6 +1,17 @@
 <link href="{{ STATIC_URL }}custom/css/createpoll.css" rel="stylesheet">
 <script src="{{ STATIC_URL }}custom/js/createpoll.js"></script>
-
+{% if rc %}
+    {% ifequal rc "Y" %}
+        <div class="container alert alert-success col-md-4 col-xs-6 col-md-offset-3" role="alert" style="text-align: center;margin-top: 10%">
+            <strong>Success!</strong> Your poll submitted successfully.
+        </div>
+    {% endifequal %}
+    {% ifequal rc "N" %}
+        <div class="container alert alert-success col-md-4 col-xs-6 col-md-offset-3" role="alert" style="text-align: center;margin-top: 10%">
+            <strong>Failure!</strong> Technical Failure.
+        </div>
+    {% endifequal %}    
+{% else %}
 <form method="POST" action="" id="createpoll">
 {% csrf_token %}
 <div style="margin-top: 10px;">
@@ -16,11 +27,12 @@
             <div class="panel-body">
               <div class="input-group">
                 <span class="input-group-addon addOnWidth1 pollName">Poll Name</span> 
-                <input type="text" class="form-control" id="pollname">
+                <input type="text" class="form-control" id="pollName">
               </div>
               <h3><button type="button" class="btn" id="qbtn"><span style="color: #2c9473" class="glyphicon glyphicon-plus" data-toggle="tooltip" title="Add a poll question">Add</span></button></h3>
-              <div id="questionid"></div>
-              <!-- Below is autogenrated code from jquery -->
+              <h4 id="errormsg"  style="display: none;"><span class="label label-danger">Empty question or option present in poll. Please fix them and try again</span></h4>
+              <div id="questionId"></div>
+              <!-- Above is autogenrated code from jquery -->
             </div><!-- End of panel body -->
             
             <!-- Panel Footer Body -->
@@ -35,3 +47,4 @@
     </div>
 </div>
 </form>
+{% endif %}

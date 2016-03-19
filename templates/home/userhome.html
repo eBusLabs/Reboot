@@ -13,7 +13,7 @@
 {% include "includes/nav_side.html" %}
 {% endif %}
 </div>
-<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main" style="margin-top: 10px">
+<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main" style="margin-top: 10px" id="cont">
 {% ifequal action "home" %}
 {% include "includes/usrhome.html" %}
 {% endifequal %}
@@ -30,8 +30,8 @@
 {% include "includes/reset.html" %}
 {% endifequal %}
 
-{% ifequal action "addpoll" %}
-{% include "includes/addpoll.html" %}
+{% ifequal action "createpoll" %}
+{% include "includes/createpoll.html" %}
 {% endifequal %}
 {% ifequal action "currpoll" %}
 {% include "includes/currpoll.html" %}

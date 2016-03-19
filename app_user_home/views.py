@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
 from .forms import *  # @UnusedWildImport
+from django.http.response import HttpResponse
 
 
 @login_required
@@ -85,9 +86,16 @@ def user_resetpwd_view(request):
     
 @login_required
 def admin_create_polls_view(request):
-    is_poll_admin = request.user.groups.filter(name="polladmin").exists()
-    return render(request, "home/userhome.html", {"user":request.user,"action":"addpoll","polladmin":is_poll_admin})
-    pass
+    if request.method == "POST":
+        is_poll_admin = request.user.groups.filter(name="polladmin").exists()
+        return render(request, "home/userhome.html", {"user":request.user,
+                                                      "action":"createpoll",
+                                                      "polladmin":is_poll_admin,
+                                                      "rc":"Y",
+                                                      })
+    else:
+        is_poll_admin = request.user.groups.filter(name="polladmin").exists()
+        return render(request, "home/userhome.html", {"user":request.user,"action":"createpoll","polladmin":is_poll_admin})
 
 @login_required
 def admin_current_polls_view(request):
