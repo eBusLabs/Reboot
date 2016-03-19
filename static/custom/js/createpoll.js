@@ -8,7 +8,15 @@ $(document).ready(function() {
 		$(id).tooltip("hide");
 	});
 	
+	$(".panel-body").on("focus", ".addOption", function() {
+		var qid = $(this).closest(".gqa").attr("id");
+		var id = "#" + qid.replace("group","question");
+		$(id).tooltip("hide");
+	});
+	
 	$("#qbtn").click(function() {
+		//hide tooltip if it is there
+		$("#qbtn").tooltip("hide");
 		questionCount = questionCount + 1;
 		var groupId = "group" + questionCount;       	              //group contain question and options
 		var questionId = "question" + questionCount;                  //question id
@@ -61,10 +69,17 @@ $(document).ready(function() {
 	});
 	
 	$("#createpoll").submit(function(event) {
+		if (formCheck() === true) {
+			console.log("cooooool");	
+		}	else {
+			event.preventDefault();
+		}
+	});
+	
+	function formCheck() {
 		$("#errormsg").attr("style", "display:none;")
-		event.preventDefault();
-		var postJson = '{';
 		var allOk = true;
+		var postJson = '{';
 		
 		//check poll name is not empty
 		var pollName = $("#pollName").val();
@@ -75,15 +90,20 @@ $(document).ready(function() {
 			$("#pollName").tooltip("show");
 			return;
 		}
-		
+		//loop through questions
+		var qCount = 0;
 		$($(".gqa").get().reverse()).each(function() {
+			qCount = qCount + 1;
 			var questionId = "#" + $(this).attr("id").replace("group","question");
 			var optionClasss = "." + $(this).attr("id").replace("group","question");
 			//check if question box is empty
 			if($(questionId).val().trim()) {
 				var val = $(questionId).val();
 				postJson = postJson + '{"question":"' +  val + '","options":[{'
+				//loop through options of a question
+				var oCount = 0;
 				$(optionClasss).each(function(){
+					oCount = oCount + 1;
 					var optionId = "#" + $(this).attr("id");
 					//check if option box is empty
 					if($(optionId).val().trim()) {
@@ -94,6 +114,11 @@ $(document).ready(function() {
 						allOk = false;
 					}
 				});
+				if (oCount < 2) {
+					$(questionId).tooltip({trigger:"manual", title:"Question must have two options",placement:"top"});
+					$(questionId).tooltip("show");
+					allOk = false;
+				}
 				postJson = postJson.substr(0,(postJson.length - 1));
 				postJson = postJson + '}]},';
 			} else {
@@ -103,43 +128,29 @@ $(document).ready(function() {
 			}
 		});
 		
-		function csrfSafeMethod(method) {
-		    // these HTTP methods do not require CSRF protection
-		    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+		console.log("QCount : " + qCount);
+		if(qCount === 0) {
+			$("#qbtn").tooltip({trigger:"manual", title:"No Question in polls",placement:"top"});
+			$("#qbtn").tooltip("show");
+			allOk = false;
 		}
-		
 		//if all is ok, parse json and send to server
 		if (allOk) {
 			postJson = postJson.substr(0,(postJson.length - 1));
 			postJson = postJson + ']}';
-			var csrftoken = $("input[name=csrfmiddlewaretoken]").val();
 			try {
-				console.log("Json : " + postJson);
-				jQuery.parseJSON(postJson)
-				$.ajaxSetup({
-				    beforeSend: function(xhr, settings) {
-				        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-				            xhr.setRequestHeader("X-CSRFToken", csrftoken);
-				        }
-				    }
-				});
-				//$.post("/addpoll/", postJson);
-				$.post("/addpoll/",postJson, function(data, textStatus, req) {
-					if (textStatus === "success") {
-						console.log("Data : " + data);
-						console.log("textStatus : " + textStatus );
-						console.log("request : " + req);
-						$("html").replaceWith($(data));
-						
-					} else {
-						console.log("xhr failure");
-					}
-				});
-			} catch (err){
-				console.log("Erros parsing Json : " + err);
+				jQuery.parseJSON(postJson);
+				$("#jsonData").attr("value",postJson);
+			} catch(err) {
+				allOk = false;
+				console.log(postJson);
+				console.log(err);
 			}
 		} else {
-			$("#errormsg").attr("style", "display:default;")
+			allOk = false;
+			$("#errormsg").attr("style", "display:default;");
 		}
-	});
+		
+		return allOk;
+	}
 });

@@ -87,12 +87,15 @@ def user_resetpwd_view(request):
 @login_required
 def admin_create_polls_view(request):
     if request.method == "POST":
+        postdic = request.POST
+        jsonData = postdic["jsonData"];
         is_poll_admin = request.user.groups.filter(name="polladmin").exists()
-        return render(request, "home/userhome.html", {"user":request.user,
-                                                      "action":"createpoll",
-                                                      "polladmin":is_poll_admin,
-                                                      "rc":"Y",
-                                                      })
+        return HttpResponse(jsonData)
+#         return render(request, "home/userhome.html", {"user":request.user,
+#                                                       "action":"createpoll",
+#                                                       "polladmin":is_poll_admin,
+#                                                       "rc":"Y",
+#                                                       })
     else:
         is_poll_admin = request.user.groups.filter(name="polladmin").exists()
         return render(request, "home/userhome.html", {"user":request.user,"action":"createpoll","polladmin":is_poll_admin})

@@ -12,8 +12,6 @@
         </div>
     {% endifequal %}    
 {% else %}
-<form method="POST" action="" id="createpoll">
-{% csrf_token %}
 <div style="margin-top: 10px;">
     <div class="panel panel-primary">
             <!-- Panel Heading Div -->
@@ -30,7 +28,7 @@
                 <input type="text" class="form-control" id="pollName">
               </div>
               <h3><button type="button" class="btn" id="qbtn"><span style="color: #2c9473" class="glyphicon glyphicon-plus" data-toggle="tooltip" title="Add a poll question">Add</span></button></h3>
-              <h4 id="errormsg"  style="display: none;"><span class="label label-danger">Empty question or option present in poll. Please fix them and try again</span></h4>
+              <h4 id="errormsg"  style="display: none;"><span class="label label-danger">Correct errors. Take help from tooltip.</span></h4>
               <div id="questionId"></div>
               <!-- Above is autogenrated code from jquery -->
             </div><!-- End of panel body -->
@@ -39,12 +37,15 @@
             <div class="panel-footer" style="margin-top: 10px">
             <div class="row">
                 <div class="col-xs-12 col-sm-12 col-md-12">
-                    <button class="btn icon-btn-save btn-success" type="submit" style="margin-left: 48%;background: #2c9473;" >
+                    <button type="submit" form="createpoll" id="submitForm" class="btn icon-btn-save btn-success" style="margin-left: 48%;background: #2c9473;" >
                     <span class="btn-save-label"><i class="glyphicon glyphicon-floppy-disk"></i></span>Save</button>
                 </div>
            </div>
            </div>
     </div>
 </div>
+<form method="POST" action="" id="createpoll">
+{% csrf_token %}
+    <input id="jsonData" type="hidden" name="jsonData" value=""/>
 </form>
 {% endif %}
