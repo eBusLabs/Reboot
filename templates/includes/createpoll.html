@@ -6,11 +6,31 @@
             <strong>Success!</strong> Your poll submitted successfully.
         </div>
     {% endifequal %}
+    
     {% ifequal rc "N" %}
         <div class="container alert alert-success col-md-4 col-xs-6 col-md-offset-3" role="alert" style="text-align: center;margin-top: 10%">
             <strong>Failure!</strong> Technical Failure.
         </div>
-    {% endifequal %}    
+    {% endifequal %}
+    
+    {% ifequal rc "EPJ" %}
+        <div class="container alert alert-success col-md-4 col-xs-6 col-md-offset-3" role="alert" style="text-align: center;margin-top: 10%">
+            <strong>Failure!</strong> Error parsing Json.
+        </div>
+    {% endifequal %}
+    
+    {% ifequal rc "FE" %}
+        <div class="container alert alert-success col-md-4 col-xs-6 col-md-offset-3" role="alert" style="text-align: center;margin-top: 10%">
+            <strong>Failure!</strong> Error in forms.
+        </div>
+    {% endifequal %}
+    
+    {% ifequal rc "DB" %}
+        <div class="container alert alert-success col-md-4 col-xs-6 col-md-offset-3" role="alert" style="text-align: center;margin-top: 10%">
+            <strong>Failure!</strong> Error updating database.
+        </div>
+    {% endifequal %}
+        
 {% else %}
 <div style="margin-top: 10px;">
     <div class="panel panel-primary">
@@ -47,5 +67,6 @@
 <form method="POST" action="" id="createpoll">
 {% csrf_token %}
     <input id="jsonData" type="hidden" name="jsonData" value=""/>
+    <input id="page" type="hidden" name="page" value=""/>
 </form>
 {% endif %}

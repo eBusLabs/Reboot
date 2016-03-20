@@ -70,7 +70,7 @@ $(document).ready(function() {
 	
 	$("#createpoll").submit(function(event) {
 		if (formCheck() === true) {
-			console.log("cooooool");	
+			//submit the form
 		}	else {
 			event.preventDefault();
 		}
@@ -99,7 +99,7 @@ $(document).ready(function() {
 			//check if question box is empty
 			if($(questionId).val().trim()) {
 				var val = $(questionId).val();
-				postJson = postJson + '{"question":"' +  val + '","options":[{'
+				postJson = postJson + '{"question":"' +  val + '","options":['
 				//loop through options of a question
 				var oCount = 0;
 				$(optionClasss).each(function(){
@@ -107,7 +107,7 @@ $(document).ready(function() {
 					var optionId = "#" + $(this).attr("id");
 					//check if option box is empty
 					if($(optionId).val().trim()) {
-						postJson = postJson + '"option":"' + $(optionId).val() + '",';
+						postJson = postJson + '{"option":"' + $(optionId).val() + '"},';
 					} else {
 						$(optionId).tooltip({trigger:"manual", title:"Option can't be empty",placement:"top"});
 						$(optionId).tooltip("show");
@@ -120,7 +120,7 @@ $(document).ready(function() {
 					allOk = false;
 				}
 				postJson = postJson.substr(0,(postJson.length - 1));
-				postJson = postJson + '}]},';
+				postJson = postJson + ']},';
 			} else {
 				$(questionId).tooltip({trigger:"manual", title:"Question can't be empty",placement:"top"});
 				$(questionId).tooltip("show");
@@ -128,7 +128,6 @@ $(document).ready(function() {
 			}
 		});
 		
-		console.log("QCount : " + qCount);
 		if(qCount === 0) {
 			$("#qbtn").tooltip({trigger:"manual", title:"No Question in polls",placement:"top"});
 			$("#qbtn").tooltip("show");
@@ -141,9 +140,9 @@ $(document).ready(function() {
 			try {
 				jQuery.parseJSON(postJson);
 				$("#jsonData").attr("value",postJson);
+				console.log(postJson);
 			} catch(err) {
 				allOk = false;
-				console.log(postJson);
 				console.log(err);
 			}
 		} else {

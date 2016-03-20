@@ -10,7 +10,7 @@ user_home_url = [
     url(r"profile/$",user_profile_view),
     url(r"setting/$",user_setting_view),
     url(r"resetpwd/$",user_resetpwd_view),
-    url(r"addpoll/$",admin_create_polls_view),
+    url(r"createpoll/$",admin_create_polls_view),
     url(r"currentpoll/$",admin_current_polls_view),
     url(r"allpoll/$",admin_all_polls_view),
     url(r"deletepoll/$",admin_delete_polls_view),
