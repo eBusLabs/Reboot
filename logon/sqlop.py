@@ -17,17 +17,13 @@ def register_user(postdic):
         user.is_staff = False
         user.is_active = True
         user.is_superuser = False
-        user.save
+        user.save()
         return 'OK'
     except IntegrityError as ie:
         return str(ie)
         
-    except Exception:
-        from generic import errprinter
-        from inspect import currentframe, getframeinfo
-        f = getframeinfo(currentframe())
-        errprinter.printmsg(f.lineno + 1, __name__, str(ie))
-        return str(ie)
+    except Exception as e:
+        return str(e)
         
     
     

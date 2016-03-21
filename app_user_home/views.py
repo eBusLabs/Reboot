@@ -3,9 +3,8 @@ import json
 from authtools.views import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
 
-from .sqlop import insert_poll
+from app_poll_core.sqlop import insert_poll
 
 from .forms import *  # @UnusedWildImport
 
