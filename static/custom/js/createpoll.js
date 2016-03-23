@@ -1,5 +1,6 @@
 var questionCount = 0;
 var optionCount = 0;
+var displayCount = 0;
 
 $(document).ready(function() {
 	//hide tooltip if user is correcting error
@@ -15,6 +16,8 @@ $(document).ready(function() {
 	});
 	
 	$("#qbtn").click(function() {
+		displayCount = displayCount + 1;
+		$("#dc").text(displayCount);
 		//hide tooltip if it is there
 		$("#qbtn").tooltip("hide");
 		questionCount = questionCount + 1;
@@ -58,6 +61,8 @@ $(document).ready(function() {
 	
 	//since removeQuestion button is added dynamically we need on function
 	$( ".panel-body" ).on( "click",".removeQuestion", function() {
+		displayCount = displayCount - 1;
+		$("#dc").text(displayCount);
 		//remove question and option group
 		var grp = "#" + $(this).attr("id").replace("removeQuestion", "group");
 		$(grp).remove();
@@ -140,7 +145,6 @@ $(document).ready(function() {
 			try {
 				jQuery.parseJSON(postJson);
 				$("#jsonData").attr("value",postJson);
-				console.log(postJson);
 			} catch(err) {
 				allOk = false;
 				console.log(err);

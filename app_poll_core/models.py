@@ -1,14 +1,13 @@
-from django.contrib.auth.models import User
 from django.db import models
 
 
 class poll_model(models.Model):
     poll_name = models.CharField(max_length=1000)
-    poll_status = models.CharField(max_length=1)
     poll_start = models.DateField(null=True)
     poll_end = models.DateField(null=True)
-    eligible = models.CharField(max_length=100,null=True)
-    vote = models.IntegerField(null=True)
+    group = models.CharField(max_length=100,null=True)
+    created_by = models.CharField(max_length=8)
+    total_vote = models.IntegerField(null=True)
 
 class question_model(models.Model):
     poll_name = models.ForeignKey(poll_model, on_delete=models.CASCADE)

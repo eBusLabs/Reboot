@@ -47,7 +47,23 @@
                 <span class="input-group-addon addOnWidth1 pollName">Poll Name</span> 
                 <input type="text" class="form-control" id="pollName">
               </div>
-              <h3><button type="button" class="btn" id="qbtn"><span style="color: #2c9473" class="glyphicon glyphicon-plus" data-toggle="tooltip" title="Add a poll question">Add</span></button></h3>
+              <!-- Question Meter Begin -->
+              <div class="row">
+                <div class="col-md-10 col-sm-10 col-xs-10">
+                    <h3>
+                        <button type="button" class="btn" id="qbtn"><span style="color: #2c9473" class="glyphicon glyphicon-plus" data-toggle="tooltip" title="Add a poll question">Add</span></button>
+                    </h3>
+                </div>
+                <div class="col-md-1 col-sm-1 col-xs-1">
+                    <!-- something for future -->
+                </div>
+                <div class="col-md-1 col-sm-1 col-xs-1" style="margin-top: 15px">
+                    <h4>
+                        <span style="color: #2c9473; vertical-align: middle;" class="glyphicon glyphicon-dashboard" data-toggle="tooltip" title="Question Meter"></span>
+                        <span id="dc" style="color: #2c9473; vertical-align: sub;"></span>
+                    </h4>
+                </div>
+              </div> <!-- Question meter end -->
               <h4 id="errormsg"  style="display: none;"><span class="label label-danger">Correct errors. Take help from tooltip.</span></h4>
               <div id="questionId"></div>
               <!-- Above is autogenrated code from jquery -->
@@ -67,6 +83,5 @@
 <form method="POST" action="" id="createpoll">
 {% csrf_token %}
     <input id="jsonData" type="hidden" name="jsonData" value=""/>
-    <input id="page" type="hidden" name="page" value=""/>
 </form>
 {% endif %}

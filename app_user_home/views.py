@@ -139,7 +139,7 @@ def admin_create_polls_view(request):
                     break
                     
         if form_ok:            
-            insert_success = insert_poll(jsonDict)
+            insert_success = insert_poll(request.user, jsonDict)
             if insert_success:
                 return render(request, "home/userhome.html", {  "user":request.user,
                                                                 "action":"createpoll",
