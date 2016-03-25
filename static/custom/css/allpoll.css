@@ -1,0 +1,18 @@
+.removeButton {
+-webkit-appearance: none;
+outline: none;
+border: 0;
+background: transparent;        
+}
+
+.openButton {
+-webkit-appearance: none;
+outline: none;
+border: 0;
+background: transparent;        
+}
+
+.pollFont {
+	font-family: monospace;
+	font-size: large;
+}

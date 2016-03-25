@@ -1,1 +1,18 @@
-<h1>TODO : ALL POLL</h1>
+<link href="{{ STATIC_URL }}custom/css/allpoll.css" rel="stylesheet">
+<script src="{{ STATIC_URL }}custom/js/allpoll.js"></script>
+<ul class="nav nav-tabs">
+  <li role="presentation" {% if alldraft     %} class="active" {% endif %}><a href="/allpoll/draft/">Drafts</a></li>
+  <li role="presentation" {% if allcurrent   %} class="active" {% endif %}><a href="/allpoll/current/">Current Polls</a></li>
+  <li role="presentation" {% if allcompleted %} class="active" {% endif %} ><a href="/allpoll/completed/">Completed Polls</a></li>
+</ul>
+{% if alldraft %}
+{% include "includes/alldraft.html" %}
+{% endif %}
+
+{% if allcurrent %}
+{% include "includes/allcurrent.html" %}
+{% endif %}
+
+{% if allcompleted %}
+{% include "includes/allcompleted.html" %}
+{% endif %}

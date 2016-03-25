@@ -1,4 +1,5 @@
 from .models import poll_model, question_model, answer_model
+from django.db.models.fields import Field
 
 def insert_poll(user, jsonDict):
     pn = jsonDict["pollname"]
@@ -36,3 +37,14 @@ def insert_poll(user, jsonDict):
             return False
     
     return True
+def draft_poll(user):
+    poll_dict = {}
+    draft_rows = poll_model.objects.filter(
+                                        poll_start__isnull=True,
+                                        poll_end__isnull=True,
+                                        created_by__exact=user,
+                                        )
+    for row in draft_rows:
+        poll_dict[str(row.id)] = row.poll_name
+    
+    return poll_dict 

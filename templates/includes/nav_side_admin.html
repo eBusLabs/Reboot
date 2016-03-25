@@ -7,14 +7,10 @@
  
  <ul class="nav nav-sidebar">
   <li {% ifequal action "createpoll" %}class="active"{% endifequal %}><a href="/createpoll/">Create Poll</a></li>
-  <li {% ifequal action "currpoll" %}class="active"{% endifequal %}><a href="/currentpoll/">Current Polls</a></li>
   <li {% ifequal action "allpoll" %}class="active"{% endifequal %}><a href="/allpoll/">All Polls</a></li>
-  <li {% ifequal action "delpoll" %}class="active"{% endifequal %}><a href="/deletepoll/">Delete Polls</a></li>
  </ul>
  
  <ul class="nav nav-sidebar">
-  <li {% ifequal action "profile" %}class="active"{% endifequal %}><a href="/profile/">My Profile</a></li>
-  <li {% ifequal action "setting" %}class="active"{% endifequal %}><a href="/setting/">Setting</a></li>
   <li {% ifequal action "resetpwd" %}class="active"{% endifequal %}><a href="/resetpwd/">Change Password</a><li>
  </ul>
  

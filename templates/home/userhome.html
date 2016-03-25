@@ -20,12 +20,6 @@
 {% ifequal action "lastpoll" %}
 {% include "includes/lastpolls.html" %}
 {% endifequal %}
-{% ifequal action "profile" %}
-{% include "includes/profile.html" %}
-{% endifequal %}
-{% ifequal action "setting" %}
-{% include "includes/setting.html" %}
-{% endifequal %}
 {% ifequal action "resetpwd" %}
 {% include "includes/reset.html" %}
 {% endifequal %}
@@ -33,14 +27,8 @@
 {% ifequal action "createpoll" %}
 {% include "includes/createpoll.html" %}
 {% endifequal %}
-{% ifequal action "currpoll" %}
-{% include "includes/currpoll.html" %}
-{% endifequal %}
 {% ifequal action "allpoll" %}
 {% include "includes/allpoll.html" %}
-{% endifequal %}
-{% ifequal action "delpoll" %}
-{% include "includes/delpoll.html" %}
 {% endifequal %}
 </div>
 {% endblock %}

@@ -1,0 +1,41 @@
+{% if rc %}
+
+{% else %}
+<div style="margin-top: 10px;" id="polllist">
+{% if poll_dict %}
+{% for k, v in poll_dict.items %}
+ <div class="row" style="margin-top: 5px;">
+    <div class="col-md-10 col-sm-12 col-xs-12">
+        <ul class="list-group-item pollFont">{{ v }}</ul>
+    </div>
+    <div class="col-md-1 col-sm-4 col-xs-4">
+        <ul class="list-group-item">
+            <button id="open{{ k }}" 
+                    type="submit" 
+                    form="draftform" 
+                    class="openButton">
+              <span style="color: green;" class="glyphicon glyphicon-open"></span>
+            </button>
+        </ul>
+    </div>
+    <div class="col-md-1 col-sm-4 col-xs-4">
+        <ul class="list-group-item">
+            <button id="del{{ k }}" 
+                    form="draftform"
+                    type="submit" 
+                    class="removeButton">
+                    <span style="color: red;" class="glyphicon glyphicon-minus-sign"></span>
+            </button>
+        </ul>
+    </div>
+ </div>
+{% endfor %} 
+{% endif %}
+</div>
+
+<form method="POST" action="" id="draftform">
+{% csrf_token %}
+    <input id="draftaction" type="hidden" name="draftaction" value=""/>
+    <input id="pollid" type="hidden" name="pollid" value=""/>
+</form>
+{% endif %} <!-- no return code, normal flow -->

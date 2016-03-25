@@ -4,9 +4,10 @@ from authtools.views import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
-from app_poll_core.sqlop import insert_poll
+from app_poll_core.sqlop import insert_poll, draft_poll
 
 from .forms import *  # @UnusedWildImport
+from django.http.response import HttpResponse
 
 
 @login_required
@@ -19,16 +20,6 @@ def user_lastpoll_view(request):
     is_poll_admin = request.user.groups.filter(name="polladmin").exists()
     return render(request, "home/userhome.html", {"user":request.user,"action":"lastpoll","polladmin":is_poll_admin})
     
-@login_required
-def user_profile_view(request):
-    is_poll_admin = request.user.groups.filter(name="polladmin").exists()
-    render(request, "home/userhome.html", {"user":request.user,"action":"profile","polladmin":is_poll_admin})
-    
-@login_required
-def user_setting_view(request):
-    is_poll_admin = request.user.groups.filter(name="polladmin").exists()
-    return render(request, "home/userhome.html", {"user":request.user,"action":"setting","polladmin":is_poll_admin})
-
 @login_required
 def user_resetpwd_view(request):
     is_poll_admin = request.user.groups.filter(name="polladmin").exists()
@@ -162,19 +153,50 @@ def admin_create_polls_view(request):
         return render(request, "home/userhome.html", {"user":request.user,
                                                       "action":"createpoll",
                                                       "polladmin":is_poll_admin})
-
-@login_required
-def admin_current_polls_view(request):
-    is_poll_admin = request.user.groups.filter(name="polladmin").exists()
-    return render(request, "home/userhome.html", {"user":request.user,"action":"currpoll","polladmin":is_poll_admin})
-    pass
-
 @login_required
 def admin_all_polls_view(request):
     is_poll_admin = request.user.groups.filter(name="polladmin").exists()
-    return render(request, "home/userhome.html", {"user":request.user,"action":"allpoll","polladmin":is_poll_admin}) 
+    return render(request, "home/userhome.html",{
+                                                "polladmin":is_poll_admin,
+                                                "user":request.user,
+                                                "action":"allpoll",
+                                                "alldraft":True
+                                                }) 
 
 @login_required
-def admin_delete_polls_view(request):
+def admin_all_polls_draft_view(request):
     is_poll_admin = request.user.groups.filter(name="polladmin").exists()
-    return render(request, "home/userhome.html", {"user":request.user,"action":"delpoll","polladmin":is_poll_admin})
+    if request.method == "POST":
+        postdic = request.POST
+        pollid = postdic["pollid"]
+        action = postdic["draftaction"]
+        return HttpResponse(pollid + "<br>" + action)
+    else:
+        poll_dict = draft_poll(request.user)
+        return render(request,"home/userhome.html", {
+                                                    "polladmin":is_poll_admin,
+                                                    "user":request.user,
+                                                    "action":"allpoll",
+                                                    "alldraft":True, 
+                                                    "poll_dict":poll_dict,
+                                                    })
+
+@login_required
+def admin_all_polls_current_view(request):
+    is_poll_admin = request.user.groups.filter(name="polladmin").exists()
+    return render(request,"home/userhome.html", {
+                                                "polladmin":is_poll_admin,
+                                                "user":request.user,
+                                                "action":"allpoll",
+                                                "allcurrent":True, 
+                                                })
+    
+@login_required
+def admin_all_polls_completed_view(request):
+    is_poll_admin = request.user.groups.filter(name="polladmin").exists()
+    return render(request,"home/userhome.html", {
+                                                "polladmin":is_poll_admin,
+                                                "user":request.user,
+                                                "action":"allpoll",
+                                                "allcompleted":True, 
+                                                })
