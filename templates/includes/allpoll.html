@@ -1,12 +1,14 @@
-<link href="{{ STATIC_URL }}custom/css/allpoll.css" rel="stylesheet">
-<script src="{{ STATIC_URL }}custom/js/allpoll.js"></script>
 <ul class="nav nav-tabs">
-  <li role="presentation" {% if alldraft     %} class="active" {% endif %}><a href="/allpoll/draft/">Drafts</a></li>
+  <li role="presentation" {% if alldraft  or alldraft_open   %} class="active" {% endif %}><a href="/allpoll/draft/">Drafts</a></li>
   <li role="presentation" {% if allcurrent   %} class="active" {% endif %}><a href="/allpoll/current/">Current Polls</a></li>
   <li role="presentation" {% if allcompleted %} class="active" {% endif %} ><a href="/allpoll/completed/">Completed Polls</a></li>
 </ul>
 {% if alldraft %}
 {% include "includes/alldraft.html" %}
+{% endif %}
+
+{% if alldraft_open %}
+{% include "includes/openpoll.html" %}
 {% endif %}
 
 {% if allcurrent %}

@@ -1,12 +1,37 @@
-{% if rc %}
-
+<link href="{{ STATIC_URL }}custom/css/alldraft.css" rel="stylesheet">
+<script src="{{ STATIC_URL }}custom/js/alldraft.js"></script>
+{% if alldraftrc %}
+    {% ifequal alldraftrc "OPS" %}
+        <div class="container alert alert-success col-md-4 col-xs-6 col-md-offset-3" role="alert" style="text-align: center;margin-top: 10%">
+            <strong>Success!</strong> Poll opened successfully.
+        </div>
+    {% endifequal %}
+    
+    {% ifequal alldraftrc "OPF" %}
+        <div class="container alert alert-success col-md-4 col-xs-6 col-md-offset-3" role="alert" style="text-align: center;margin-top: 10%">
+            <strong>Failure!</strong> Error Occur, shoot the developer.
+        </div>
+    {% endifequal %}   
+     
+    {% ifequal alldraftrc "DPS" %}
+        <div class="container alert alert-success col-md-4 col-xs-6 col-md-offset-3" role="alert" style="text-align: center;margin-top: 10%">
+            <strong>Success!</strong> Poll deleted successfully.
+        </div>
+    {% endifequal %}
+        
+    {% ifequal alldraftrc "DPF" %}
+        <div class="container alert alert-success col-md-4 col-xs-6 col-md-offset-3" role="alert" style="text-align: center;margin-top: 10%">
+            <strong>Failure!</strong> Database Error, shoot the developer.
+        </div>
+    {% endifequal %}    
+    
 {% else %}
 <div style="margin-top: 10px;" id="polllist">
 {% if poll_dict %}
 {% for k, v in poll_dict.items %}
  <div class="row" style="margin-top: 5px;">
     <div class="col-md-10 col-sm-12 col-xs-12">
-        <ul class="list-group-item pollFont">{{ v }}</ul>
+        <ul id="pn{{ k }}" class="list-group-item pollFont">{{ v }}</ul>
     </div>
     <div class="col-md-1 col-sm-4 col-xs-4">
         <ul class="list-group-item">
@@ -14,7 +39,7 @@
                     type="submit" 
                     form="draftform" 
                     class="openButton">
-              <span style="color: green;" class="glyphicon glyphicon-open"></span>
+              <span style="color: green;" class="glyphicon glyphicon-open" data-toggle="tooltip" title="Open this poll."></span>
             </button>
         </ul>
     </div>
@@ -24,18 +49,21 @@
                     form="draftform"
                     type="submit" 
                     class="removeButton">
-                    <span style="color: red;" class="glyphicon glyphicon-minus-sign"></span>
+                    <span style="color: red;" class="glyphicon glyphicon-minus-sign" data-toggle="tooltip" title="Delete this poll."></span>
             </button>
         </ul>
     </div>
  </div>
 {% endfor %} 
+{% else %}
+<div class="alert alert-info" role="alert"><strong>Oops!!</strong> You have no draft polls.</div>
 {% endif %}
 </div>
 
-<form method="POST" action="" id="draftform">
+<form method="POST" action="/allpoll/draft/" id="draftform">
 {% csrf_token %}
     <input id="draftaction" type="hidden" name="draftaction" value=""/>
     <input id="pollid" type="hidden" name="pollid" value=""/>
+    <input id="poll_name" type="hidden" name="poll_name" value=""/>
 </form>
 {% endif %} <!-- no return code, normal flow -->

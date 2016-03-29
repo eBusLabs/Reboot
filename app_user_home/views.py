@@ -1,18 +1,20 @@
 import json
+import time
 
-from authtools.views import update_session_auth_hash
+from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
+from django.http.response import HttpResponse
 from django.shortcuts import render
 
-from app_poll_core.sqlop import insert_poll, draft_poll
+from app_poll_core.sqlop import *  # @UnusedWildImport
 
 from .forms import *  # @UnusedWildImport
-from django.http.response import HttpResponse
 
 
 @login_required
 def user_home_view(request):
     is_poll_admin = request.user.groups.filter(name="polladmin").exists()
+    #list available open polls for this user
     return render(request, "home/userhome.html", {"user":request.user,"action":"home","polladmin":is_poll_admin})
     
 @login_required
@@ -156,11 +158,13 @@ def admin_create_polls_view(request):
 @login_required
 def admin_all_polls_view(request):
     is_poll_admin = request.user.groups.filter(name="polladmin").exists()
+    poll_dict = draft_poll(request.user)
     return render(request, "home/userhome.html",{
                                                 "polladmin":is_poll_admin,
                                                 "user":request.user,
                                                 "action":"allpoll",
-                                                "alldraft":True
+                                                "alldraft":True,
+                                                "poll_dict":poll_dict,
                                                 }) 
 
 @login_required
@@ -168,9 +172,39 @@ def admin_all_polls_draft_view(request):
     is_poll_admin = request.user.groups.filter(name="polladmin").exists()
     if request.method == "POST":
         postdic = request.POST
-        pollid = postdic["pollid"]
         action = postdic["draftaction"]
-        return HttpResponse(pollid + "<br>" + action)
+        poll_id = postdic["pollid"]
+        poll_name = postdic["poll_name"]
+        if action == "O":
+            groups = get_groups("ebus")
+            form = OpenPollForm()
+            return render(request,"home/userhome.html", {
+                                                    "polladmin":is_poll_admin,
+                                                    "user":request.user,
+                                                    "form":form,
+                                                    "action":"allpoll",
+                                                    "alldraft_open":True,
+                                                    "poll_name":poll_name,
+                                                    "poll_id":poll_id,
+                                                    "group_list":groups,
+                                                    }) 
+        if action == "D":
+            if delete_poll(poll_id):
+                return render(request,"home/userhome.html", {
+                                                    "polladmin":is_poll_admin,
+                                                    "user":request.user,
+                                                    "action":"allpoll",
+                                                    "alldraft":True, 
+                                                    "alldraftrc":"DPS",
+                                                    })
+            else:
+                return render(request,"home/userhome.html", {
+                                                    "polladmin":is_poll_admin,
+                                                    "user":request.user,
+                                                    "action":"allpoll",
+                                                    "alldraft":True, 
+                                                    "alldraftrc":"DPF",
+                                                    })
     else:
         poll_dict = draft_poll(request.user)
         return render(request,"home/userhome.html", {
@@ -180,7 +214,81 @@ def admin_all_polls_draft_view(request):
                                                     "alldraft":True, 
                                                     "poll_dict":poll_dict,
                                                     })
-
+        
+@login_required
+def admin_all_polls_draft_view_open(request):
+    is_poll_admin = request.user.groups.filter(name="polladmin").exists()
+    groups = get_groups("ebus")
+    if request.method == "POST":
+        form = OpenPollForm(request.POST)
+        postdic = request.POST
+        poll_id = postdic["poll_id"]
+        poll_name = postdic["poll_name"]
+        if form.is_valid():
+            group_list = postdic.getlist("group_names")
+            # check group_list manually, as i don't add this in form
+            if group_list:
+                for item in group_list:
+                    if is_group_exist(item):
+                        pass
+                    else: #invalid group
+                        print ("renderng empty gorp")
+                        return render(request,"home/userhome.html", {
+                                                        "polladmin":is_poll_admin,
+                                                        "user":request.user,
+                                                        "form":form,
+                                                        "action":"allpoll",
+                                                        "alldraft_open":True,
+                                                        "poll_name":poll_name,
+                                                        "poll_id":poll_id,
+                                                        "group_list":groups,
+                                                        "empty_group":True,
+                                                        }) 
+            else: #group_list is empty
+                return render(request,"home/userhome.html", {
+                                                        "polladmin":is_poll_admin,
+                                                        "user":request.user,
+                                                        "form":form,
+                                                        "action":"allpoll",
+                                                        "alldraft_open":True,
+                                                        "poll_name":poll_name,
+                                                        "poll_id":poll_id,
+                                                        "group_list":groups,
+                                                        "empty_group":True,
+                                                        }) 
+                    
+            start_date = postdic["start_date"]
+            end_date = postdic["end_date"]
+            res = str(group_list) + "<br>" + str(start_date) + "<br>" + str(end_date) + "<br>" + str(poll_id) + "<br>" + str(poll_name)
+            print(res)
+            if open_poll(poll_id, start_date, end_date, group_list):#update database
+                return render(request,"home/userhome.html", {
+                                                    "polladmin":is_poll_admin,
+                                                    "user":request.user,
+                                                    "action":"allpoll",
+                                                    "alldraft":True, 
+                                                    "alldraftrc":"OPS",
+                                                    })
+            else: #error updating database
+                return render(request,"home/userhome.html", {
+                                                    "polladmin":is_poll_admin,
+                                                    "user":request.user,
+                                                    "action":"allpoll",
+                                                    "alldraft":True, 
+                                                    "alldraftrc":"OPF",
+                                                    })
+        else: #invalid form, return with errors
+            return render(request,"home/userhome.html", {
+                                                    "polladmin":is_poll_admin,
+                                                    "user":request.user,
+                                                    "form":form,
+                                                    "action":"allpoll",
+                                                    "alldraft_open":True,
+                                                    "poll_name":poll_name,
+                                                    "poll_id":poll_id,
+                                                    "group_list":groups,
+                                                    }) 
+    
 @login_required
 def admin_all_polls_current_view(request):
     is_poll_admin = request.user.groups.filter(name="polladmin").exists()

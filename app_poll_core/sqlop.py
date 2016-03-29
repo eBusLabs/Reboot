@@ -1,5 +1,7 @@
 from .models import poll_model, question_model, answer_model
-from django.db.models.fields import Field
+from collections import OrderedDict
+from django.contrib.auth.models import Group
+from app_poll_core.models import poll_group_model
 
 def insert_poll(user, jsonDict):
     pn = jsonDict["pollname"]
@@ -37,14 +39,102 @@ def insert_poll(user, jsonDict):
             return False
     
     return True
+
 def draft_poll(user):
-    poll_dict = {}
+    poll_dict = OrderedDict()
     draft_rows = poll_model.objects.filter(
                                         poll_start__isnull=True,
                                         poll_end__isnull=True,
                                         created_by__exact=user,
-                                        )
+                                        ).order_by("-id") #- sign revert the order, isn't python cool
     for row in draft_rows:
         poll_dict[str(row.id)] = row.poll_name
     
     return poll_dict 
+
+def is_group_exist(group_name):
+    return Group.objects.filter(name=group_name).exists()
+
+def get_groups(starts_with=""):
+    group_list = []
+    group_rows = Group.objects.filter(
+                                        name__startswith=starts_with
+                                    )
+    for row in group_rows:
+        group_list.append(row.name)
+    
+    return group_list
+
+def open_poll(poll_id, poll_start, poll_end, group_list):
+    row = poll_model.objects.get(id=poll_id)
+    row.poll_start = poll_start
+    row.poll_end = poll_end
+    try:
+        row.save()
+        #insert into poll_group_model
+        for group in group_list:
+            row_poll_group = poll_group_model(
+                                            poll_group = group,
+                                            poll_name = row,    
+                                            )
+            row_poll_group.save()
+    except:
+        return False
+    
+    return True
+
+def delete_poll(poll_id):
+    try:
+        row = poll_model.objects.get(id=poll_id)
+        row.delete()
+    except:
+        return False
+    
+    return True
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

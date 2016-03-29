@@ -11,6 +11,7 @@ user_home_url = [
     url(r"createpoll/$",admin_create_polls_view),
     url(r"allpoll/$",admin_all_polls_view),
     url(r"allpoll/draft/$",admin_all_polls_draft_view),
+    url(r"allpoll/draft/open/$",admin_all_polls_draft_view_open),
     url(r"allpoll/current/$",admin_all_polls_current_view),
     url(r"allpoll/completed/$",admin_all_polls_completed_view),
 ]

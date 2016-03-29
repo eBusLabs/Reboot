@@ -35,12 +35,14 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'Reboot',
     'logon',
     'app_user_home',
     'app_poll_core',
 )
 
 MIDDLEWARE_CLASSES = (
+    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -48,7 +50,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'Reboot.mymiddleware.RestrictStaffToAdminMiddleware',
+    #'Reboot.mymiddleware.RestrictStaffToAdminMiddleware',
 )
 
 ROOT_URLCONF = 'Reboot.urls'
@@ -84,10 +86,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 STATICFILES_DIRS = (os.path.join(BASE_DIR,'static'),)
 STATIC_URL = '/static/'
-
+ 
 #Media Files
-MEDIA_ROOT = (os.path.join(BASE_DIR,'media'),)
-MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR,'media')
+MEDIA_URL = '/media/'
 
 #Adding my template directory. I will use tuple
 TEMPLATES = [
@@ -101,6 +103,7 @@ TEMPLATES = [
             'context_processors': [
                 # Insert your TEMPLATE_CONTEXT_PROCESSORS here or use this
                 # list if you haven't customized them:
+                'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.i18n',
@@ -143,29 +146,24 @@ LOGGING = {
 #             'propagate': True,
 #             'level':'DEBUG',
 #         },
-        'insert': {
+        'Reboot': {
             'handlers': ['debugfile',],
             'level': APP_LOG_LEVEL,
         },      
-        'books': {
+        'logon': {
             'handlers': ['debugfile',],
             'level': APP_LOG_LEVEL,
         },
-        'Reboot': {
+        'app_user_home': {
+            'handlers': ['debugfile',],
+            'level': APP_LOG_LEVEL,
+        },
+        'app_user_core': {
             'handlers': ['debugfile',],
             'level': APP_LOG_LEVEL,
         },             
                    
     }
-}
-
-# Rest Framework settings
-REST_FRAMEWORK = {
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-    ]
 }
 
 #Change default login url

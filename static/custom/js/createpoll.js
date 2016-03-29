@@ -144,6 +144,7 @@ $(document).ready(function() {
 			postJson = postJson + ']}';
 			try {
 				jQuery.parseJSON(postJson);
+				console.log(postJson);
 				$("#jsonData").attr("value",postJson);
 			} catch(err) {
 				allOk = false;

@@ -7,6 +7,9 @@ $(document).ready(function() {
 		// set form value
 		$("#draftaction").val("O");
 		$("#pollid").val(id);
+		var poll_name_id = "#pn" + id;
+		var poll_name = $(poll_name_id).text();
+		$("#poll_name").val(poll_name);
 	});
 	
 	//action on click of delete button
@@ -29,8 +32,6 @@ $(document).ready(function() {
 		//check if action is O or D
 		var id = $("#pollid").val();
 		var action = $("#draftaction").val();
-		console.log("Action : " + action);
-		console.log("Id     : " + id);
 		//check id
 		if(id.trim()){
 			//continue
