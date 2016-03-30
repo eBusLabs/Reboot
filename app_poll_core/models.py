@@ -6,7 +6,7 @@ class poll_model(models.Model):
     poll_start = models.DateField(null=True, db_index=True)
     poll_end = models.DateField(null=True, db_index=True)
     created_by = models.CharField(max_length=8)
-    total_vote = models.IntegerField(null=True)
+    total_vote = models.IntegerField(default=0)
     
     def __str__(self):
         return self.poll_name
@@ -28,7 +28,7 @@ class question_model(models.Model):
 class answer_model(models.Model):
     question = models.ForeignKey(question_model, on_delete=models.CASCADE, db_index=True)
     option = models.CharField(max_length=500)
-    vote = models.IntegerField(null=True)
+    vote = models.IntegerField(default=0)
     
     def __str__(self):
         return self.option

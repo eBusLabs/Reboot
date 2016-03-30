@@ -2,6 +2,7 @@ from .models import poll_model, question_model, answer_model
 from collections import OrderedDict
 from django.contrib.auth.models import Group
 from app_poll_core.models import poll_group_model
+from datetime import date
 
 def insert_poll(user, jsonDict):
     pn = jsonDict["pollname"]
@@ -45,7 +46,7 @@ def draft_poll(user):
     draft_rows = poll_model.objects.filter(
                                         poll_start__isnull=True,
                                         poll_end__isnull=True,
-                                        created_by__exact=user,
+                                        created_by=user,
                                         ).order_by("-id") #- sign revert the order, isn't python cool
     for row in draft_rows:
         poll_dict[str(row.id)] = row.poll_name
@@ -92,7 +93,16 @@ def delete_poll(poll_id):
     
     return True
 
-
+def get_polls_for_user(user):
+        poll_available = poll_model.objects.filter(poll_end__gte=date.today())
+        poll_list = {}
+        for poll in poll_available:
+            for grp in poll_group_model.objects.filter(poll_name=poll.id):
+                if user.groups.filter(name=grp).exists():
+                    poll_list[str(poll.id)] = poll.poll_name
+                    break
+        return poll_list
+    
 
 
 

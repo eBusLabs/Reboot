@@ -1,7 +1,6 @@
 from django import forms  # @UnusedImport
 
 from generic.form_widget import *  # @UnusedWildImport
-from app_poll_core.sqlop import get_groups
 
 class ResetPwdForm(forms.Form):
     attrs = {"class":"form-control", "placeholder":"Password", "required":"", "autofocus":"", "type":"password"}
@@ -19,4 +18,6 @@ class OpenPollForm(forms.Form):
     start_date = forms.DateField(widget = get_date_widget(attrs))
     end_date = forms.DateField(widget = get_date_widget(attrs))
 
+class TakePollForm(forms.Form):
+    pass
 

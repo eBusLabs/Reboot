@@ -1,26 +1,47 @@
 import json
-import time
 
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from django.http.response import HttpResponse
 from django.shortcuts import render
 
 from app_poll_core.sqlop import *  # @UnusedWildImport
 
 from .forms import *  # @UnusedWildImport
+from django.http.response import HttpResponse
 
 
 @login_required
 def user_home_view(request):
     is_poll_admin = request.user.groups.filter(name="polladmin").exists()
-    #list available open polls for this user
-    return render(request, "home/userhome.html", {"user":request.user,"action":"home","polladmin":is_poll_admin})
+    #get polls for this user
+    poll_dict = get_polls_for_user(request.user)
+    return render(request, "home/userhometab.html", {
+                                                "user":request.user,
+                                                "polladmin":is_poll_admin,
+                                                "poll_dict":poll_dict,
+                                        })
+    
+@login_required
+def user_take_poll_view(request):
+    is_poll_admin = request.user.groups.filter(name="polladmin").exists()
+    if request.method == "POST":
+        postdic = request.POST
+        poll_id = postdic["pollid"]
+        poll_name = postdic["poll_name"]
+        res = poll_id + poll_name
+        return HttpResponse(res)
+#         return render(request, "home/takepoll.html", {
+#                                                     "user":request.user,
+#                                                     "polladmin":is_poll_admin,
+#                                                     })
     
 @login_required
 def user_lastpoll_view(request):
     is_poll_admin = request.user.groups.filter(name="polladmin").exists()
-    return render(request, "home/userhome.html", {"user":request.user,"action":"lastpoll","polladmin":is_poll_admin})
+    return render(request, "home/lastpolltab.html", {
+                                                "user":request.user,
+                                                "polladmin":is_poll_admin,
+                                                })
     
 @login_required
 def user_resetpwd_view(request):
@@ -39,46 +60,46 @@ def user_resetpwd_view(request):
                 errmsgs.append("New password don't match")
             
             if errmsgs:    
-                return render(request, "home/userhome.html", {
-                                                        "errmsgs":errmsgs,      
-                                                        "form":form,
-                                                        "user":request.user,
-                                                        "action":"resetpwd",
-                                                        "polladmin":is_poll_admin})
+                return render(request, "home/changepwdtab.html", {
+                                                                "errmsgs":errmsgs,      
+                                                                "form":form,
+                                                                "user":request.user,
+                                                                "polladmin":is_poll_admin,
+                                                            })
             else:
                 try:
                     request.user.set_password(postdic["newpwd"])
                     request.user.save()
                     #update hash so user is not logged out due to invalid session
                     update_session_auth_hash(request, request.user)
-                    return render(request, "home/userhome.html", {
-                                                    "pwdcs":"Y",
-                                                    "form":form,
-                                                    "user":request.user,
-                                                    "action":"resetpwd",
-                                                    "polladmin":is_poll_admin})
+                    return render(request, "home/changepwdtab.html", {
+                                                                    "pwdcs":"Y",
+                                                                    "form":form,
+                                                                    "user":request.user,
+                                                                    "polladmin":is_poll_admin,
+                                                                    })
                 except:
-                    return render(request, "home/userhome.html", {
-                                                    "pwdcs":"N",
-                                                    "form":form,
-                                                    "user":request.user,
-                                                    "action":"resetpwd",
-                                                    "polladmin":is_poll_admin})
+                    return render(request, "home/changepwdtab.html", {
+                                                                    "pwdcs":"N",
+                                                                    "form":form,
+                                                                    "user":request.user,
+                                                                    "polladmin":is_poll_admin,
+                                                                    })
                     
                     
         else:
-            return render(request, "home/userhome.html", {
-                                                    "form":form,
-                                                    "user":request.user,
-                                                    "action":"resetpwd",
-                                                    "polladmin":is_poll_admin})
+            return render(request, "home/changepwdtab.html", {
+                                                            "form":form,
+                                                            "user":request.user,
+                                                            "polladmin":is_poll_admin,
+                                                            })
     else:
         form = ResetPwdForm()
-        return render(request, "home/userhome.html", {
+        return render(request, "home/changepwdtab.html", {
                                                     "form":form,
                                                     "user":request.user,
-                                                    "action":"resetpwd",
-                                                    "polladmin":is_poll_admin})
+                                                    "polladmin":is_poll_admin,
+                                                    })
     
 @login_required
 def admin_create_polls_view(request):
@@ -90,8 +111,8 @@ def admin_create_polls_view(request):
         try:
             jsonDict = json.loads(jsonData)
         except:
-            return render(request, "home/userhome.html", {"user":request.user,
-                                                            "action":"createpoll",
+            return render(request, "home/createpolltab.html", {
+                                                            "user":request.user,
                                                             "polladmin":is_poll_admin,
                                                             "rc":"EPJ" #error parsing json
                                                             })
@@ -134,35 +155,35 @@ def admin_create_polls_view(request):
         if form_ok:            
             insert_success = insert_poll(request.user, jsonDict)
             if insert_success:
-                return render(request, "home/userhome.html", {  "user":request.user,
-                                                                "action":"createpoll",
+                return render(request, "home/createpolltab.html", {  
+                                                                "user":request.user,
                                                                 "polladmin":is_poll_admin,
                                                                 "rc":"Y",
                                                             })
             else:
-                return render(request, "home/userhome.html", {  "user":request.user,
-                                                                "action":"createpoll",
+                return render(request, "home/createpolltab.html", {  
+                                                                "user":request.user,
                                                                 "polladmin":is_poll_admin,
                                                                 "rc":"DB",
                                                             })
         else: #form not ok
-            return render(request, "home/userhome.html", {  "user":request.user,
-                                                          "action":"createpoll",
-                                                          "polladmin":is_poll_admin,
-                                                          "rc":"FE", #form error    
-                                                        })
+            return render(request, "home/createpolltab.html", {  
+                                                            "user":request.user,
+                                                            "polladmin":is_poll_admin,
+                                                            "rc":"FE", #form error    
+                                                            })
     else: # method is not post
-        return render(request, "home/userhome.html", {"user":request.user,
-                                                      "action":"createpoll",
-                                                      "polladmin":is_poll_admin})
+        return render(request, "home/createpolltab.html", {
+                                                        "user":request.user,
+                                                        "polladmin":is_poll_admin,
+                                                        })
 @login_required
 def admin_all_polls_view(request):
     is_poll_admin = request.user.groups.filter(name="polladmin").exists()
     poll_dict = draft_poll(request.user)
-    return render(request, "home/userhome.html",{
+    return render(request, "home/alltab.html",{
                                                 "polladmin":is_poll_admin,
                                                 "user":request.user,
-                                                "action":"allpoll",
                                                 "alldraft":True,
                                                 "poll_dict":poll_dict,
                                                 }) 
@@ -178,11 +199,10 @@ def admin_all_polls_draft_view(request):
         if action == "O":
             groups = get_groups("ebus")
             form = OpenPollForm()
-            return render(request,"home/userhome.html", {
+            return render(request,"home/alltab.html", {
                                                     "polladmin":is_poll_admin,
                                                     "user":request.user,
                                                     "form":form,
-                                                    "action":"allpoll",
                                                     "alldraft_open":True,
                                                     "poll_name":poll_name,
                                                     "poll_id":poll_id,
@@ -190,27 +210,24 @@ def admin_all_polls_draft_view(request):
                                                     }) 
         if action == "D":
             if delete_poll(poll_id):
-                return render(request,"home/userhome.html", {
+                return render(request,"home/alltab.html", {
                                                     "polladmin":is_poll_admin,
                                                     "user":request.user,
-                                                    "action":"allpoll",
                                                     "alldraft":True, 
                                                     "alldraftrc":"DPS",
                                                     })
             else:
-                return render(request,"home/userhome.html", {
+                return render(request,"home/alltab.html", {
                                                     "polladmin":is_poll_admin,
                                                     "user":request.user,
-                                                    "action":"allpoll",
                                                     "alldraft":True, 
                                                     "alldraftrc":"DPF",
                                                     })
     else:
         poll_dict = draft_poll(request.user)
-        return render(request,"home/userhome.html", {
+        return render(request,"home/alltab.html", {
                                                     "polladmin":is_poll_admin,
                                                     "user":request.user,
-                                                    "action":"allpoll",
                                                     "alldraft":True, 
                                                     "poll_dict":poll_dict,
                                                     })
@@ -232,12 +249,10 @@ def admin_all_polls_draft_view_open(request):
                     if is_group_exist(item):
                         pass
                     else: #invalid group
-                        print ("renderng empty gorp")
-                        return render(request,"home/userhome.html", {
+                        return render(request,"home/alltab.html", {
                                                         "polladmin":is_poll_admin,
                                                         "user":request.user,
                                                         "form":form,
-                                                        "action":"allpoll",
                                                         "alldraft_open":True,
                                                         "poll_name":poll_name,
                                                         "poll_id":poll_id,
@@ -245,11 +260,10 @@ def admin_all_polls_draft_view_open(request):
                                                         "empty_group":True,
                                                         }) 
             else: #group_list is empty
-                return render(request,"home/userhome.html", {
+                return render(request,"home/alltab.html", {
                                                         "polladmin":is_poll_admin,
                                                         "user":request.user,
                                                         "form":form,
-                                                        "action":"allpoll",
                                                         "alldraft_open":True,
                                                         "poll_name":poll_name,
                                                         "poll_id":poll_id,
@@ -262,27 +276,24 @@ def admin_all_polls_draft_view_open(request):
             res = str(group_list) + "<br>" + str(start_date) + "<br>" + str(end_date) + "<br>" + str(poll_id) + "<br>" + str(poll_name)
             print(res)
             if open_poll(poll_id, start_date, end_date, group_list):#update database
-                return render(request,"home/userhome.html", {
+                return render(request,"home/alltab.html", {
                                                     "polladmin":is_poll_admin,
                                                     "user":request.user,
-                                                    "action":"allpoll",
                                                     "alldraft":True, 
                                                     "alldraftrc":"OPS",
                                                     })
             else: #error updating database
-                return render(request,"home/userhome.html", {
+                return render(request,"home/alltab.html", {
                                                     "polladmin":is_poll_admin,
                                                     "user":request.user,
-                                                    "action":"allpoll",
                                                     "alldraft":True, 
                                                     "alldraftrc":"OPF",
                                                     })
         else: #invalid form, return with errors
-            return render(request,"home/userhome.html", {
+            return render(request,"home/alltab.html", {
                                                     "polladmin":is_poll_admin,
                                                     "user":request.user,
                                                     "form":form,
-                                                    "action":"allpoll",
                                                     "alldraft_open":True,
                                                     "poll_name":poll_name,
                                                     "poll_id":poll_id,
@@ -292,19 +303,17 @@ def admin_all_polls_draft_view_open(request):
 @login_required
 def admin_all_polls_current_view(request):
     is_poll_admin = request.user.groups.filter(name="polladmin").exists()
-    return render(request,"home/userhome.html", {
+    return render(request,"home/alltab.html", {
                                                 "polladmin":is_poll_admin,
                                                 "user":request.user,
-                                                "action":"allpoll",
                                                 "allcurrent":True, 
                                                 })
     
 @login_required
 def admin_all_polls_completed_view(request):
     is_poll_admin = request.user.groups.filter(name="polladmin").exists()
-    return render(request,"home/userhome.html", {
+    return render(request,"home/alltab.html", {
                                                 "polladmin":is_poll_admin,
                                                 "user":request.user,
-                                                "action":"allpoll",
                                                 "allcompleted":True, 
                                                 })
