@@ -7,7 +7,7 @@
 {% block body %}
 {% include "includes/nav.html" %}
 <div class="col-sm-3 col-md-2 sidebar">
-{% with "lastpoll" as action %}
+{% with action="lastpoll"%}
 {% if polladmin %}
 {% include "includes/nav_side_admin.html" %}
 {% else %} 

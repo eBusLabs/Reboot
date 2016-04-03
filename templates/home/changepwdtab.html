@@ -7,7 +7,7 @@
 {% block body %}
 {% include "includes/nav.html" %}
 <div class="col-sm-3 col-md-2 sidebar">
-{% with "resetpwd" as action %}
+{% with action="resetpwd" %}
 {% if polladmin %}
 {% include "includes/nav_side_admin.html" %}
 {% else %} 

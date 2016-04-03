@@ -5,8 +5,8 @@ user_home_url = [
     # Examples:
     # url(r"^$", "Reboot.views.home", name="home"),
     # url(r"^blog/", include("blog.urls")),
-    url(r"^uhome/$",user_home_view),
-    url(r"^uhome/takepoll/$",user_take_poll_view),
+    url(r"^uhome/$",user_home_view), 
+    url(r"^uhome/submit/$",user_home_poll_submit), 
     url(r"lastpolls/$",user_lastpoll_view),
     url(r"resetpwd/$",user_resetpwd_view),
     url(r"createpoll/$",admin_create_polls_view),

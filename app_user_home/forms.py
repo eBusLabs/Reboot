@@ -1,6 +1,7 @@
 from django import forms  # @UnusedImport
 
 from generic.form_widget import *  # @UnusedWildImport
+from app_poll_core.sqlop import get_questions, get_options
 
 class ResetPwdForm(forms.Form):
     attrs = {"class":"form-control", "placeholder":"Password", "required":"", "autofocus":"", "type":"password"}
@@ -19,5 +20,18 @@ class OpenPollForm(forms.Form):
     end_date = forms.DateField(widget = get_date_widget(attrs))
 
 class TakePollForm(forms.Form):
-    pass
+    def __init__(self, *args, **kwargs):
+        self.qid = kwargs.pop("qid")
+        super(TakePollForm, self).__init__(*args, **kwargs)
+        attrs = {}
+        question_rows = get_questions(self.qid)
+        for question_row in question_rows:
+            choices = []
+            question_id = question_row.id;
+            question_value = question_row.question;
+            options_rows = get_options(question_id)
+            for option_row in options_rows:
+                choice = (option_row.id, option_row.option)
+                choices.append(choice)
+            self.fields["question_" + str(question_id)] = forms.ChoiceField(label=question_value, choices=tuple(choices), widget=get_radio_widget(attrs))
 

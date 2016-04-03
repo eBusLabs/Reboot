@@ -1,16 +1,20 @@
-from .models import poll_model, question_model, answer_model
 from collections import OrderedDict
-from django.contrib.auth.models import Group
-from app_poll_core.models import poll_group_model
 from datetime import date
+
+from django.contrib.auth.models import Group
+from django.db.models import F
+
+from app_poll_core.models import poll_group_model
+
+from .models import poll_model, question_model, answer_model
 
 def insert_poll(user, jsonDict):
     pn = jsonDict["pollname"]
-    #insert poll
+    # insert poll
     try:
         row_poll = poll_model   (
-                                poll_name = pn,
-                                created_by = user,
+                                poll_name=pn,
+                                created_by=user,
                                 )
         row_poll.save()
     except Exception as e:
@@ -24,15 +28,15 @@ def insert_poll(user, jsonDict):
         question_name = qadict["question"]
         try:
             row_q = question_model  (
-                                    question = question_name,
-                                    poll_name = row_poll,
+                                    question=question_name,
+                                    poll_name=row_poll,
                                     )
             row_q.save();
             for optiondict in qadict["options"]:
                 option_name = optiondict["option"]
                 row_o = answer_model(
-                                    question = row_q,
-                                    option = option_name,
+                                    question=row_q,
+                                    option=option_name,
                                     )
                 row_o.save()
         except Exception as e:
@@ -47,7 +51,7 @@ def draft_poll(user):
                                         poll_start__isnull=True,
                                         poll_end__isnull=True,
                                         created_by=user,
-                                        ).order_by("-id") #- sign revert the order, isn't python cool
+                                        ).order_by("-id")  # - sign revert the order, isn't python cool
     for row in draft_rows:
         poll_dict[str(row.id)] = row.poll_name
     
@@ -72,11 +76,11 @@ def open_poll(poll_id, poll_start, poll_end, group_list):
     row.poll_end = poll_end
     try:
         row.save()
-        #insert into poll_group_model
+        # insert into poll_group_model
         for group in group_list:
             row_poll_group = poll_group_model(
-                                            poll_group = group,
-                                            poll_name = row,    
+                                            poll_group=group,
+                                            poll_name=row,
                                             )
             row_poll_group.save()
     except:
@@ -103,9 +107,34 @@ def get_polls_for_user(user):
                     break
         return poll_list
     
+def get_questions(poll_id):
+    question_list = question_model.objects.filter(poll_name=poll_id)
+    return question_list
 
+def get_options(question_id):
+    option_list = answer_model.objects.filter(question=question_id)
+    return option_list
 
-
+def insert_vote(poll_id, postdic):
+    try:
+        poll = poll_model.objects.get(id=poll_id)
+        poll.total_vote = F("total_vote") + 1
+        poll.save(update_fields=["total_vote"])
+        for key in postdic:
+            if key.startswith("question_"):
+                print (postdic[key])
+                option = answer_model.objects.get(id=postdic[key])
+                print (option.id)
+                option.vote = F("vote") + 1
+                option.save(update_fields=["vote"])
+    except Exception as e:
+        print (str(e)) #logtrace
+        return False
+    
+    return True;
+    
+    
+        
 
 
 

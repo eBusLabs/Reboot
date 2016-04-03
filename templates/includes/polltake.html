@@ -1,0 +1,80 @@
+<link href="{{ STATIC_URL }}custom/css/polltake.css" rel="stylesheet">
+<link href="{{ STATIC_URL }}custom/css/caro.css" rel="stylesheet">
+<script src="{{ STATIC_URL }}custom/js/polltake.js"></script>
+{% if usrpollrc %}
+    {% ifequal usrpollrc "pss" %}
+        <div class="container alert alert-success col-md-4 col-xs-6 col-md-offset-3" role="alert" style="text-align: center;margin-top: 10%">
+            <strong>Success!</strong> Poll submitted successfully.
+        </div>
+    {% endifequal %}
+    
+    {% ifequal usrpollrc "psf" %}
+        <div class="container alert alert-danger col-md-4 col-xs-6 col-md-offset-3" role="alert" style="text-align: center;margin-top: 10%">
+            <strong>Failure!</strong> Click back button once, and check you have answered every question.
+        </div>
+    {% endifequal %}
+    
+        
+    {% ifequal usrpollrc "psfd" %}
+        <div class="container alert alert-danger col-md-4 col-xs-6 col-md-offset-3" role="alert" style="text-align: center;margin-top: 10%">
+            <strong>Failure!</strong>Data base failure !! Click back and try once more.
+        </div>
+    {% endifequal %}
+    
+{% else %}
+<form id="pollTaken" action="/uhome/submit/" method="post">
+{% csrf_token %}
+<div id="myCarousel" class="carousel slide" data-ride="carousel">
+    <!-- Indicators -->
+    <ol class="carousel-indicators">
+        {% for field in form%}
+            <li data-target="#myCarousel" data-slide-to="{{ forloop.counter0 }}"></li>
+        {% endfor %}
+    </ol>
+    <div class="carousel-inner" role="listbox">
+    {% for field in form %}
+        {% if forloop.first %}
+        <div class="item active">
+        {% else %}
+        <div class="item">
+        {% endif %}
+            <div class="container">
+                <div class="carousel-caption">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title" style="text-align: left;">
+                                <span class="glyphicon glyphicon-arrow-right"></span>{{ field.label }}
+                            </h3>
+                        </div><!-- panel heading end -->
+                            <div class="panel-body">
+                            {% for option in field %}
+                                <ul class="list-group">
+                                    <li class="list-group-item">
+                                        <div class="radio" style="text-align: left;">
+                                            {{option}}
+                                        </div>
+                                    </li>
+                                </ul>
+                            {% endfor %}
+                            </div>
+                        <!-- panel body end -->
+                    </div><!-- panel end -->
+                </div>
+            </div>
+        </div>
+      {% endfor %}
+      <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true" style="color: gray;"></span>
+        <span class="sr-only">Previous</span>
+      </a>
+      <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true" style="color: gray;width: 10%;"></span>
+        <span class="sr-only">Next</span>
+      </a>
+</div>
+</div>
+<div class="row" style="text-align: center;">
+<button class="btn btn-lg btn-primary" type="submit">Submit</button>
+</div>
+</form>
+{% endif %}
