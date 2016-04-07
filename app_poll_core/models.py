@@ -34,7 +34,7 @@ class answer_model(models.Model):
         return self.option
 
 class history_model(models.Model):
-    user = models.CharField(max_length=100)
+    user = models.IntegerField()
     poll_name = models.ForeignKey(poll_model, on_delete=models.CASCADE, db_index=True)
     taken = models.BooleanField(default=False)
     

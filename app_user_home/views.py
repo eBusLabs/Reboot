@@ -36,32 +36,38 @@ def user_home_view(request):
                                         })
 
 @login_required
-def user_home_poll_submit(request):
+def user_home_poll_submit_view(request):
     is_poll_admin = request.user.groups.filter(name="polladmin").exists()
     if request.method == "POST":
         postdic = request.POST
         poll_id = request.session["poll_id"]
+        #check if this user already  taken this poll
+        if is_poll_taken(request.user, poll_id):
+            return render(request, "home/usrpoll.html", {
+                                                        "user":request.user,
+                                                        "polladmin":is_poll_admin,
+                                                        "usrpollrc":"taken",
+                                                        })
+            
+            
         form = TakePollForm(postdic, qid=poll_id);
         if form.is_valid():
-            if insert_vote(poll_id, postdic):
+            if insert_vote(request.user, poll_id, postdic):
                 return render(request, "home/usrpoll.html", {
                                                         "user":request.user,
                                                         "polladmin":is_poll_admin,
-                                                        "poll_id":poll_id,
                                                         "usrpollrc":"pss",
                                                         })
             else:
                 return render(request, "home/usrpoll.html", {
                                                         "user":request.user,
                                                         "polladmin":is_poll_admin,
-                                                        "poll_id":poll_id,
                                                         "usrpollrc":"psfd",
                                                         })
         else:
             return render(request, "home/usrpoll.html", {
                                                     "user":request.user,
                                                     "polladmin":is_poll_admin,
-                                                    "poll_id":poll_id,
                                                     "usrpollrc":"psf",
                                                     })
          

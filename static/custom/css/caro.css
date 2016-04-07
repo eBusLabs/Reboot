@@ -29,13 +29,14 @@
 }
 
 .carousel-control.left, .carousel-control.right {
-    background-image: none
+    background-image: none;
+    background-color: transparent;
 }
 
 .carousel-indicators li {
-    background-color: red;
+    background-color: gray;
 }
 
 .carousel-indicators .active {
-    background-color: blue;
+    background-color: #337ab7;
 }

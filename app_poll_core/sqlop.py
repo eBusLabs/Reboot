@@ -4,9 +4,10 @@ from datetime import date
 from django.contrib.auth.models import Group
 from django.db.models import F
 
-from app_poll_core.models import poll_group_model
+from app_poll_core.models import poll_group_model, history_model
 
 from .models import poll_model, question_model, answer_model
+
 
 def insert_poll(user, jsonDict):
     pn = jsonDict["pollname"]
@@ -103,8 +104,9 @@ def get_polls_for_user(user):
         for poll in poll_available:
             for grp in poll_group_model.objects.filter(poll_name=poll.id):
                 if user.groups.filter(name=grp).exists():
-                    poll_list[str(poll.id)] = poll.poll_name
-                    break
+                    if not is_poll_taken(user, poll.id):
+                        poll_list[str(poll.id)] = poll.poll_name
+                        break
         return poll_list
     
 def get_questions(poll_id):
@@ -115,7 +117,8 @@ def get_options(question_id):
     option_list = answer_model.objects.filter(question=question_id)
     return option_list
 
-def insert_vote(poll_id, postdic):
+def insert_vote(user, poll_id, postdic):
+    poll = None
     try:
         poll = poll_model.objects.get(id=poll_id)
         poll.total_vote = F("total_vote") + 1
@@ -131,9 +134,25 @@ def insert_vote(poll_id, postdic):
         print (str(e)) #logtrace
         return False
     
+    try:
+        history_model_row = history_model(
+                                        user = user.id,
+                                        poll_name = poll,
+                                        taken = True,
+                                        )
+        #history_model_row.save()
+    except Exception as e:
+        print (str(e)) #logtrace
+        return False
+    
     return True;
     
-    
+def is_poll_taken(user, poll_id):
+    row = history_model.objects.filter(user = user.id, poll_name = poll_id)
+    if row:
+        return True
+    else:
+        return False
         
 
 

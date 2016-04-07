@@ -25,6 +25,7 @@ class TakePollForm(forms.Form):
         super(TakePollForm, self).__init__(*args, **kwargs)
         attrs = {}
         question_rows = get_questions(self.qid)
+        count = 0
         for question_row in question_rows:
             choices = []
             question_id = question_row.id;
@@ -33,5 +34,6 @@ class TakePollForm(forms.Form):
             for option_row in options_rows:
                 choice = (option_row.id, option_row.option)
                 choices.append(choice)
-            self.fields["question_" + str(question_id)] = forms.ChoiceField(label=question_value, choices=tuple(choices), widget=get_radio_widget(attrs))
+            self.fields["question_" + str(count)] = forms.ChoiceField(label=question_value, choices=tuple(choices), widget=get_radio_widget(attrs))
+            count = count + 1
 
