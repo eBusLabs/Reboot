@@ -8,6 +8,7 @@ user_home_url = [
     url(r"^uhome/$",user_home_view), 
     url(r"^uhome/submit/$",user_home_poll_submit_view), 
     url(r"lastpolls/$",user_lastpoll_view),
+    url(r"lastpolls/showpoll/$",user_showpoll_view),
     url(r"resetpwd/$",user_resetpwd_view),
     url(r"createpoll/$",admin_create_polls_view),
     url(r"allpoll/$",admin_all_polls_view),

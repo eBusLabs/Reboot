@@ -2,6 +2,7 @@ from django import forms  # @UnusedImport
 
 from generic.form_widget import *  # @UnusedWildImport
 from app_poll_core.sqlop import get_questions, get_options
+from datetime import date
 
 class ResetPwdForm(forms.Form):
     attrs = {"class":"form-control", "placeholder":"Password", "required":"", "autofocus":"", "type":"password"}
@@ -37,3 +38,19 @@ class TakePollForm(forms.Form):
             self.fields["question_" + str(count)] = forms.ChoiceField(label=question_value, choices=tuple(choices), widget=get_radio_widget(attrs))
             count = count + 1
 
+
+class ShowUserPollResultForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        self.start_date = kwargs.pop("start_date")
+        self.end_date =kwargs.pop("end_date")
+        super(ShowUserPollResultForm, self).__init__(*args, **kwargs)
+        attrs = {"class":"form-control", "value":self.start_date}
+        self.fields["sdate"] = forms.DateField(widget = get_date_widget(attrs))
+        attrs["value"] = self.end_date
+        self.fields["edate"] = forms.DateField(widget = get_date_widget(attrs))
+        
+    def clean_edate(self):
+        if self.end_date < self.start_date:
+            raise forms.ValidationError("End date is greater than start date")
+        if self.end_date > date.today().isoformat():
+            raise forms.ValidationError("End date cannot be greater than todays date")

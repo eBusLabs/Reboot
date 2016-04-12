@@ -8,6 +8,7 @@ from app_poll_core.sqlop import *  # @UnusedWildImport
 
 from .forms import *  # @UnusedWildImport
 from django.http.response import HttpResponse
+from datetime import timedelta
 
 def poll_admin_check(user):
     return user.groups.filter(name="polladmin").exists()
@@ -74,10 +75,60 @@ def user_home_poll_submit_view(request):
 @login_required
 def user_lastpoll_view(request):
     is_poll_admin = request.user.groups.filter(name="polladmin").exists()
-    return render(request, "home/lastpolltab.html", {
-                                                "user":request.user,
-                                                "polladmin":is_poll_admin,
-                                                })
+    #post means user requested specific date
+    if request.method == "POST":
+        postdic = request.POST
+        start_date = postdic["sdate"]
+        end_date = postdic["edate"]
+        form = ShowUserPollResultForm(request.POST, start_date=start_date, end_date=end_date)
+        if form.is_valid():
+            poll_dict = poll_result(request.user, start_date, end_date)
+            return render(request, "home/lastpolltab.html", {
+                                                    "user":request.user,
+                                                    "polladmin":is_poll_admin,
+                                                    "poll_dict":poll_dict,
+                                                    "form":form
+                                                    })
+        else:
+            return render(request, "home/lastpolltab.html", {
+                                                        "user":request.user,
+                                                        "polladmin":is_poll_admin,
+                                                        "poll_dict":None,
+                                                        "form":form,
+                                                        })
+    else:
+        #by default we are showing 3 months poll result
+        end_date = date.today();
+        start_date = (end_date.replace(day=1) - timedelta(days=89)).replace(day=1)
+        poll_dict = poll_result(request.user, start_date, end_date)
+        form = ShowUserPollResultForm(start_date=start_date, end_date=end_date)
+        return render(request, "home/lastpolltab.html", {
+                                                    "user":request.user,
+                                                    "polladmin":is_poll_admin,
+                                                    "poll_dict":poll_dict,
+                                                    "form":form
+                                                    })
+        
+@login_required
+def user_showpoll_view(request):
+    is_poll_admin = request.user.groups.filter(name="polladmin").exists()
+    if request.method == "POST":
+        pollid = request.POST["pollid"]
+        if is_member_poll_group(request.user, pollid):
+            return render(request, "home/lastpolltabpoll.html", {
+                                                    "user":request.user,
+                                                    "polladmin":is_poll_admin,
+                                                    })
+        
+    else:
+        msg_list = []
+        msg_list.append("Not a post request")
+        return render(request,"home/informuser.html",{
+                                                    "user":request.user,
+                                                    "polladmin":is_poll_admin,
+                                                    "level":"Warning",
+                                                    "msg_list":msg_list,
+                                                    })
     
 @login_required
 def user_resetpwd_view(request):
@@ -85,7 +136,6 @@ def user_resetpwd_view(request):
     if request.method == "POST":
         form = ResetPwdForm(request.POST)
         if form.is_valid():
-            #tulip containing error
             errmsgs = []
             # Check is old password is authentic
             postdic = request.POST

@@ -16,3 +16,7 @@ background: transparent;
 	font-family: monospace;
 	font-size: large;
 }
+
+.buttonWidth {
+    max-width: 60px;
+}

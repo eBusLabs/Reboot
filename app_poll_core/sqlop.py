@@ -125,37 +125,61 @@ def insert_vote(user, poll_id, postdic):
         poll.save(update_fields=["total_vote"])
         for key in postdic:
             if key.startswith("question_"):
-                print (postdic[key])
                 option = answer_model.objects.get(id=postdic[key])
-                print (option.id)
                 option.vote = F("vote") + 1
                 option.save(update_fields=["vote"])
     except Exception as e:
-        print (str(e)) #logtrace
+        print (str(e))  # logtrace
         return False
     
     try:
         history_model_row = history_model(
-                                        user = user.id,
-                                        poll_name = poll,
-                                        taken = True,
+                                        user=user.id,
+                                        poll_name=poll,
+                                        taken=True,
                                         )
-        #history_model_row.save()
+        history_model_row.save()
     except Exception as e:
-        print (str(e)) #logtrace
+        print (str(e))  # logtrace
         return False
     
     return True;
     
 def is_poll_taken(user, poll_id):
-    row = history_model.objects.filter(user = user.id, poll_name = poll_id)
+    row = history_model.objects.filter(user=user.id, poll_name=poll_id)
     if row:
         return True
     else:
         return False
         
+def poll_result(user, start_date, end_date):
+    poll_list = {}
+    try:
+        polls = poll_model.objects.filter(poll_end__lt=end_date, poll_end__gte=start_date)
+        for poll in polls:
+            for grp in poll_group_model.objects.filter(poll_name=poll.id):
+                if user.groups.filter(name=grp).exists():
+                    poll_list[poll.id] = poll.poll_name
+                    break
+            
+        
+    except:
+        #logtrace
+        poll_list = {}
+    return poll_list
 
-
+def is_member_poll_group(user, pollid):
+    is_allowed = False
+    poll = poll_model.objects.get(id=pollid)
+    if poll:
+        for group in poll_group_model.objects.filter(poll_name=poll.id):
+            if user.groups.filter(name=group).exists():
+                is_allowed = True
+                break
+    else:
+        return False
+    
+    return is_allowed
 
 
 
