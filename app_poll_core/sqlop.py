@@ -181,7 +181,16 @@ def is_member_poll_group(user, pollid):
     
     return is_allowed
 
-
+def get_questions_list(pollid):
+    rows = question_model.objects.filter(poll_name=pollid)
+    qlist = []
+    if rows:
+        for row in rows:
+            qlist.append(row.question)
+    else:
+        return qlist
+    
+    return qlist
 
 
 

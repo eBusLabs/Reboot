@@ -6,24 +6,30 @@
 <div id="myCarousel" class="carousel slide" data-ride="carousel" style="margin-top: 50px;">
     <!-- Indicators -->
     <ol class="carousel-indicators">
-            <li data-target="#myCarousel" data-slide-to="0" id="indi_0"></li>
-            <li data-target="#myCarousel" data-slide-to="1" id="indi_1"></li>
+    {% for question in question_list %}
+            <li data-target="#myCarousel" data-slide-to="{{ forloop.counter0 }}" id="indi_{{ forloop.counter0 }}"></li>
+    {% endfor %}
     </ol>
     
     <div class="carousel-inner" role="listbox">
+    {% for question in question_list %}
+        {% if forloop.first %}
         <div class="item active">
+        {% else %}
+        <div class="item">
+        {% endif %}
             <div class="container">
                 <div class="carousel-caption">
                     <div class="panel panel-primary" style="background-color: #ECECEA; border-color:#028482;">
                         <div class="panel-heading" style="background: #028482; border-color:#028482;color: whitesmoke;">
                             <h3 class="panel-title" style="text-align: left;">
-                                <span class="glyphicon glyphicon-arrow-right"></span>Who is your favorite manager
+                                <span class="glyphicon glyphicon-arrow-right"></span>{{ question }}
                             </h3>
                         </div><!-- panel heading end -->
                             <div class="panel-body">
                                 <div class="row">
                                 <div class="col-md-4 col-xs-12">
-                                  <canvas id="myChart" width="200" height="200"></canvas>
+                                  <canvas id="myChart" width="250" height="250"></canvas>
                                 </div>
                                 <div class="col-md-8 col-xs-12">
                                     <ul class="list-group" style="text-align: left;">
@@ -31,8 +37,6 @@
                                         <li class="list-group-item"><span class="badge">27 %</span>Dapibus ac facilisis in</li>
                                         <li class="list-group-item"><span class="badge">83 %</span>Morbi leo risus</li>
                                         <li class="list-group-item"><span class="badge">92 %</span>Porta ac consectetur ac</li>
-                                        <li class="list-group-item"><span class="badge">42 %</span>Vestibulum at eros</li>
-                                        <li class="list-group-item"><span class="badge">27 %</span>Dapibus ac facilisis in</li>
                                     </ul>
                                 </div>
                                 </div>
@@ -41,7 +45,7 @@
                 </div>
             </div>
       </div>
-        
+      {% endfor %}  
       <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
         <span class="glyphicon glyphicon-chevron-left" aria-hidden="true" style="color: gray;"></span>
         <span class="sr-only">Previous</span>

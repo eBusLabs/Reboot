@@ -13,6 +13,29 @@ from datetime import timedelta
 def poll_admin_check(user):
     return user.groups.filter(name="polladmin").exists()
 
+def inform_user(request, level, head, msg_list):
+    if level in ("O", "o"):
+        alert = "alert-success"
+    
+    if level in ("I", "i"):
+        alert = "alert-info"
+    
+    if level in ("W", "w"):
+        alert = "alert-warning"
+    
+    if level in ("E", "e"):
+        alert = "alert-danger"
+        
+    is_poll_admin = request.user.groups.filter(name="polladmin").exists()
+    return render(request,"home/informuser.html",{
+                                                    "user":request.user,
+                                                    "polladmin":is_poll_admin,
+                                                    "alert":alert,
+                                                    "head":head,
+                                                    "msg_list":msg_list,
+                                                    })
+    
+
 @login_required
 def user_home_view(request):
     is_poll_admin = request.user.groups.filter(name="polladmin").exists()
@@ -38,42 +61,32 @@ def user_home_view(request):
 
 @login_required
 def user_home_poll_submit_view(request):
-    is_poll_admin = request.user.groups.filter(name="polladmin").exists()
     if request.method == "POST":
         postdic = request.POST
         poll_id = request.session["poll_id"]
         #check if this user already  taken this poll
         if is_poll_taken(request.user, poll_id):
-            return render(request, "home/usrpoll.html", {
-                                                        "user":request.user,
-                                                        "polladmin":is_poll_admin,
-                                                        "usrpollrc":"taken",
-                                                        })
-            
+            msg_list = []
+            msg_list.append("You have already taken this poll.")
+            return inform_user(request, "W", "Smart Ass", msg_list)
             
         form = TakePollForm(postdic, qid=poll_id);
         if form.is_valid():
             if insert_vote(request.user, poll_id, postdic):
-                return render(request, "home/usrpoll.html", {
-                                                        "user":request.user,
-                                                        "polladmin":is_poll_admin,
-                                                        "usrpollrc":"pss",
-                                                        })
+                msg_list = []
+                msg_list.append("Poll Submitted Successfully.")
+                return inform_user(request, "I", "Congrats",msg_list)
             else:
-                return render(request, "home/usrpoll.html", {
-                                                        "user":request.user,
-                                                        "polladmin":is_poll_admin,
-                                                        "usrpollrc":"psfd",
-                                                        })
+                msg_list = []
+                msg_list.append("Database Error, Click back button and try once more")
+                return inform_user(request, "E", "ERROR", msg_list)
         else:
-            return render(request, "home/usrpoll.html", {
-                                                    "user":request.user,
-                                                    "polladmin":is_poll_admin,
-                                                    "usrpollrc":"psf",
-                                                    })
+            msg_list = []
+            msg_list.append("Form Error, Click back and make sure you answered every question.")
+            return inform_user(request, "E", "ERROR", msg_list)
          
 @login_required
-def user_lastpoll_view(request):
+def user_lastpoll_view(request):#show poll taken by user in list
     is_poll_admin = request.user.groups.filter(name="polladmin").exists()
     #post means user requested specific date
     if request.method == "POST":
@@ -110,25 +123,21 @@ def user_lastpoll_view(request):
                                                     })
         
 @login_required
-def user_showpoll_view(request):
+def user_showpoll_view(request):#show poll result to user in graphical view
     is_poll_admin = request.user.groups.filter(name="polladmin").exists()
     if request.method == "POST":
         pollid = request.POST["pollid"]
         if is_member_poll_group(request.user, pollid):
+            question_list = get_questions_list(pollid)
             return render(request, "home/lastpolltabpoll.html", {
                                                     "user":request.user,
                                                     "polladmin":is_poll_admin,
+                                                    "question_list":question_list,
                                                     })
-        
+        else:
+            return inform_user(request, "E", "ERROR", ["You are not authorized to view this poll"])
     else:
-        msg_list = []
-        msg_list.append("Not a post request")
-        return render(request,"home/informuser.html",{
-                                                    "user":request.user,
-                                                    "polladmin":is_poll_admin,
-                                                    "level":"Warning",
-                                                    "msg_list":msg_list,
-                                                    })
+        return inform_user(request, "W", "Click a Button Hulk", ["Not a post request"])
     
 @login_required
 def user_resetpwd_view(request):
@@ -197,17 +206,14 @@ def admin_create_polls_view(request):
         try:
             jsonDict = json.loads(jsonData)
         except:
-            return render(request, "home/createpolltab.html", {
-                                                            "user":request.user,
-                                                            "polladmin":True,
-                                                            "rc":"EPJ" #error parsing json
-                                                            })
+            msg_list = []
+            msg_list.append("Error parsing JSON")
+            return inform_user(request, "E", "Error", msg_list)
             
         pollname = jsonDict["pollname"]
         if not pollname:
             form_ok = False
             
-        rs = rs + "pollname : " + pollname + "<br>"  
         question_list = jsonDict["questions"]
         
         #check if list is empty
@@ -241,28 +247,17 @@ def admin_create_polls_view(request):
         if form_ok:            
             insert_success = insert_poll(request.user, jsonDict)
             if insert_success:
-                return render(request, "home/createpolltab.html", {  
-                                                                "user":request.user,
-                                                                "polladmin":True,
-                                                                "rc":"Y",
-                                                            })
+                return inform_user(request, "O", "Congrats", ["Poll created successfully"])
             else:
-                return render(request, "home/createpolltab.html", {  
-                                                                "user":request.user,
-                                                                "polladmin":True,
-                                                                "rc":"DB",
-                                                            })
+                return inform_user(request, "E", "Database", ["Error Updating database"])
         else: #form not ok
-            return render(request, "home/createpolltab.html", {  
-                                                            "user":request.user,
-                                                            "polladmin":True,
-                                                            "rc":"FE", #form error    
-                                                            })
+            return inform_user(request, "E", "Form Error", ["Form is incorrect."])
     else: # method is not post
         return render(request, "home/createpolltab.html", {
                                                         "user":request.user,
                                                         "polladmin":True,
                                                         })
+        
 @login_required
 @user_passes_test(poll_admin_check)
 def admin_all_polls_view(request):
@@ -296,19 +291,11 @@ def admin_all_polls_draft_view(request):
                                                     }) 
         if action == "D":
             if delete_poll(poll_id):
-                return render(request,"home/alltab.html", {
-                                                    "polladmin":True,
-                                                    "user":request.user,
-                                                    "alldraft":True, 
-                                                    "alldraftrc":"DPS",
-                                                    })
+                return inform_user(request, "O", "Success", ["Poll deleted successfully"])
+
             else:
-                return render(request,"home/alltab.html", {
-                                                    "polladmin":True,
-                                                    "user":request.user,
-                                                    "alldraft":True, 
-                                                    "alldraftrc":"DPF",
-                                                    })
+                return inform_user(request, "E", "Error", ["Database Error"])
+
     else:
         poll_dict = draft_poll(request.user)
         return render(request,"home/alltab.html", {
@@ -360,19 +347,9 @@ def admin_all_polls_draft_view_open(request):
             start_date = postdic["start_date"]
             end_date = postdic["end_date"]
             if open_poll(poll_id, start_date, end_date, group_list):#update database
-                return render(request,"home/alltab.html", {
-                                                    "polladmin":True,
-                                                    "user":request.user,
-                                                    "alldraft":True, 
-                                                    "alldraftrc":"OPS",
-                                                    })
+                return inform_user(request, "O", "Success", ["Poll opened successfully"])
             else: #error updating database
-                return render(request,"home/alltab.html", {
-                                                    "polladmin":True,
-                                                    "user":request.user,
-                                                    "alldraft":True, 
-                                                    "alldraftrc":"OPF",
-                                                    })
+                return inform_user(request, "E", "Error", ["Error updating database"])
         else: #invalid form, return with errors
             return render(request,"home/alltab.html", {
                                                     "polladmin":True,

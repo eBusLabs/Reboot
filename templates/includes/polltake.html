@@ -1,33 +1,6 @@
 <link href="{{ STATIC_URL }}custom/css/polltake.css" rel="stylesheet">
 <link href="{{ STATIC_URL }}custom/css/caro.css" rel="stylesheet">
 <script src="{{ STATIC_URL }}custom/js/polltake.js"></script>
-{% if usrpollrc %}
-    {% ifequal usrpollrc "pss" %}
-        <div class="container alert alert-success col-md-4 col-xs-6 col-md-offset-3" role="alert" style="text-align: center;margin-top: 10%">
-            <strong>Success!</strong> Poll submitted successfully.
-        </div>
-    {% endifequal %}
-    
-    {% ifequal usrpollrc "psf" %}
-        <div class="container alert alert-danger col-md-4 col-xs-6 col-md-offset-3" role="alert" style="text-align: center;margin-top: 10%">
-            <strong>Failure!</strong> Click back button once, and check you have answered every question.
-        </div>
-    {% endifequal %}
-    
-        
-    {% ifequal usrpollrc "psfd" %}
-        <div class="container alert alert-danger col-md-4 col-xs-6 col-md-offset-3" role="alert" style="text-align: center;margin-top: 10%">
-            <strong>Failure!</strong>Data base failure !! Click back and try once more.
-        </div>
-    {% endifequal %}
-    
-        {% ifequal usrpollrc "taken" %}
-        <div class="container alert alert-danger col-md-4 col-xs-6 col-md-offset-3" role="alert" style="text-align: center;margin-top: 10%">
-            <strong>Smart Ass !!</strong>You have already taken this poll.
-        </div>
-    {% endifequal %}
-    
-{% else %}
 <form id="pollTaken" action="/uhome/submit/" method="post">
 {% csrf_token %}
 <div id="myCarousel" class="carousel slide" data-ride="carousel">
@@ -83,4 +56,3 @@
 <button id="btnPollTake" class="btn btn-lg btn-primary" type="submit">Submit</button>
 </div>
 </form>
-{% endif %}
