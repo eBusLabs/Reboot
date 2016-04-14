@@ -128,11 +128,22 @@ def user_showpoll_view(request):#show poll result to user in graphical view
     if request.method == "POST":
         pollid = request.POST["pollid"]
         if is_member_poll_group(request.user, pollid):
-            question_list = get_questions_list(pollid)
+            poll_data = collect_poll_data(pollid)
+#             for question_dict in poll_data:
+#                 for key in question_dict:
+#                     print ("Question : ",key)
+#                     option_list = question_dict[key]
+#                     for option in option_list:
+#                         print ("Option : ",option["option_string"])
+#                         print ("Count  : ",option["option_count"])
+#                         print ("Perc   : ",option["option_percentage"])
+                        
+                    
+#             return inform_user(request, "I", "Hey", ["Work in progress"])
             return render(request, "home/lastpolltabpoll.html", {
                                                     "user":request.user,
                                                     "polladmin":is_poll_admin,
-                                                    "question_list":question_list,
+                                                    "poll_data":poll_data,
                                                     })
         else:
             return inform_user(request, "E", "ERROR", ["You are not authorized to view this poll"])

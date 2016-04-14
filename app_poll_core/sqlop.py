@@ -7,6 +7,7 @@ from django.db.models import F
 from app_poll_core.models import poll_group_model, history_model
 
 from .models import poll_model, question_model, answer_model
+from django.db.models.aggregates import Sum
 
 
 def insert_poll(user, jsonDict):
@@ -180,17 +181,24 @@ def is_member_poll_group(user, pollid):
         return False
     
     return is_allowed
-
-def get_questions_list(pollid):
+ 
+def collect_poll_data(pollid):
     rows = question_model.objects.filter(poll_name=pollid)
-    qlist = []
-    if rows:
-        for row in rows:
-            qlist.append(row.question)
-    else:
-        return qlist
-    
-    return qlist
+    poll_data = []
+    for row in rows:
+        question_dict = {}
+        option_list = []
+        total_vote = answer_model.objects.filter(question=row.id).aggregate(Sum("vote"))["vote__sum"]
+        for option in answer_model.objects.filter(question=row.id):
+            option_dict = {}
+            percentage = int(round((option.vote/total_vote) * 100, 0))    
+            option_dict["option_string"] = option.option
+            option_dict["option_count"] = option.vote
+            option_dict["option_percentage"] = percentage
+            option_list.append(option_dict)
+        question_dict[row.question] = option_list
+        poll_data.append(question_dict)
+    return poll_data
 
 
 

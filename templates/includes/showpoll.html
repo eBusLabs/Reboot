@@ -2,22 +2,23 @@
 <link href="{{ STATIC_URL }}custom/css/lastpolls.css" rel="stylesheet">
 <script src="{{ STATIC_URL }}others/js/Chart.min.js"></script>
 <script src="{{ STATIC_URL }}custom/js/lastpolls.js"></script>
-
+{% load reboot_extras %}
 <div id="myCarousel" class="carousel slide" data-ride="carousel" style="margin-top: 50px;">
     <!-- Indicators -->
     <ol class="carousel-indicators">
-    {% for question in question_list %}
+    {% for question in poll_data %}
             <li data-target="#myCarousel" data-slide-to="{{ forloop.counter0 }}" id="indi_{{ forloop.counter0 }}"></li>
     {% endfor %}
     </ol>
     
     <div class="carousel-inner" role="listbox">
-    {% for question in question_list %}
+    {% for question_dict in poll_data %}
         {% if forloop.first %}
         <div class="item active">
         {% else %}
         <div class="item">
         {% endif %}
+    {% for question, options_list in question_dict.items %}
             <div class="container">
                 <div class="carousel-caption">
                     <div class="panel panel-primary" style="background-color: #ECECEA; border-color:#028482;">
@@ -33,10 +34,12 @@
                                 </div>
                                 <div class="col-md-8 col-xs-12">
                                     <ul class="list-group" style="text-align: left;">
-                                        <li class="list-group-item" style="background-color: #F7464A;"><span class="badge">14 %</span>Cras justo odio</li>
-                                        <li class="list-group-item"><span class="badge">27 %</span>Dapibus ac facilisis in</li>
-                                        <li class="list-group-item"><span class="badge">83 %</span>Morbi leo risus</li>
-                                        <li class="list-group-item"><span class="badge">92 %</span>Porta ac consectetur ac</li>
+                                        {% for question_dict in options_list %}
+                                        <li class="list-group-item">
+                                            <span class="badge">{{ question_dict|get_item:"option_percentage"}} %</span>
+                                            {{ question_dict|get_item:"option_string"}}
+                                        </li>
+                                        {% endfor %}
                                     </ul>
                                 </div>
                                 </div>
@@ -45,6 +48,7 @@
                 </div>
             </div>
       </div>
+      {% endfor %}
       {% endfor %}  
       <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
         <span class="glyphicon glyphicon-chevron-left" aria-hidden="true" style="color: gray;"></span>
