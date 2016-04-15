@@ -22,15 +22,25 @@ $(document).ready(function() {
 	$("#sdate").datetimepicker(
 	{
 		format:"YYYY-MM-DD",
-		minDate:new Date()
+		minDate:moment().format("YYYY-MM-DD"),
+		defaultDate:moment().format("YYYY-MM-DD")
 	});
 	
 	$("#edate").datetimepicker(
 	{
 		format:"YYYY-MM-DD",
-		minDate:new Date()
+		minDate:moment().format("YYYY-MM-DD"),
+        defaultDate:moment().format("YYYY-MM-DD")
 	});
 	
+	//link start date and end date window
+	$("#sdate").on("dp.change", function (e) {
+        $("#edate").data("DateTimePicker").minDate(e.date);
+    });
+    $("#edate").on("dp.change", function (e) {
+        $("#sdate").data("DateTimePicker").maxDate(e.date);
+    });
+    
 	$('#multiselect').multiselect();
 	
 	$("#openpoll").submit(function(event) {

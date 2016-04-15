@@ -1,7 +1,7 @@
-<link href="{{ STATIC_URL }}custom/css/caro.css" rel="stylesheet">
+<link href="{{ STATIC_URL }}custom/css/pollshowcar.css" rel="stylesheet">
 <link href="{{ STATIC_URL }}custom/css/lastpolls.css" rel="stylesheet">
 <script src="{{ STATIC_URL }}others/js/Chart.min.js"></script>
-<script src="{{ STATIC_URL }}custom/js/lastpolls.js"></script>
+<script src="{{ STATIC_URL }}custom/js/showpoll.js"></script>
 {% load reboot_extras %}
 <div id="myCarousel" class="carousel slide" data-ride="carousel" style="margin-top: 50px;">
     <!-- Indicators -->
@@ -30,15 +30,24 @@
                             <div class="panel-body">
                                 <div class="row">
                                 <div class="col-md-4 col-xs-12">
-                                  <canvas id="myChart" width="250" height="250"></canvas>
+                                  <canvas id="chart_{{ forloop.parentloop.counter0 }}"
+                                          width="200px" 
+                                          height="200px">
+                                  </canvas>
                                 </div>
+                                <input type="hidden" 
+                                       id="chart_{{ forloop.parentloop.counter0 }}_option_count" 
+                                       value={{ options_list|length }}>
                                 <div class="col-md-8 col-xs-12">
                                     <ul class="list-group" style="text-align: left;">
-                                        {% for question_dict in options_list %}
-                                        <li class="list-group-item">
-                                            <span class="badge">{{ question_dict|get_item:"option_percentage"}} %</span>
-                                            {{ question_dict|get_item:"option_string"}}
+                                        {% for option_dict in options_list %}
+                                        <li class="list-group-item" id="list_{{ forloop.parentloop.parentloop.counter0 }}_{{ forloop.counter0 }}" >
+                                            <span class="badge">{{ option_dict|get_item:"option_percentage"}} %</span>
+                                            {{ option_dict|get_item:"option_string"}}
                                         </li>
+                                        <input type="hidden" 
+                                               id="chart_{{ forloop.parentloop.parentloop.counter0 }}_{{ forloop.counter0 }}" 
+                                               value={{ option_dict|get_item:"option_count"}}>
                                         {% endfor %}
                                     </ul>
                                 </div>

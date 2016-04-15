@@ -3,7 +3,7 @@ $(document).ready(function() {
 	$(".carousel").carousel({
 	    interval: false
 	}); 
-	
+    
 	$("#btnPollTake").focusout(function(){
 		$("#btnPollTake").tooltip("hide");
 	});

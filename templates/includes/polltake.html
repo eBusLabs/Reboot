@@ -1,5 +1,5 @@
 <link href="{{ STATIC_URL }}custom/css/polltake.css" rel="stylesheet">
-<link href="{{ STATIC_URL }}custom/css/caro.css" rel="stylesheet">
+<link href="{{ STATIC_URL }}custom/css/polltakecar.css" rel="stylesheet">
 <script src="{{ STATIC_URL }}custom/js/polltake.js"></script>
 <form id="pollTaken" action="/uhome/submit/" method="post">
 {% csrf_token %}
@@ -19,7 +19,7 @@
         {% endif %}
             <div class="container">
                 <div class="carousel-caption">
-                    <div class="panel panel-primary">
+                    <div class="panel panel-primary" id="panel_{{ forloop.counter0 }}">
                         <div class="panel-heading">
                             <h3 class="panel-title" style="text-align: left;">
                                 <span class="glyphicon glyphicon-arrow-right"></span>{{ field.label }}

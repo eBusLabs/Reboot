@@ -1,0 +1,36 @@
+.carousel {
+    height: 500px;
+    margin-bottom: 10px;
+}
+
+.carousel-caption {
+    z-index: 10;
+    min-height: 500px;
+    right:10%;
+    left:10%;
+}
+
+/* Declare heights because of positioning of img element */
+.carousel .item {
+    height: 500px;
+    background-color: transparent;
+}
+
+.carousel-caption {
+    color: black;
+    text-shadow: none;
+}
+
+.carousel-control.left, .carousel-control.right {
+    background-image: none;
+    background-color: transparent;
+    width:10%;
+}
+
+.carousel-indicators li {
+    background-color: gray;
+}
+
+.carousel-indicators .active {
+    background-color: #337ab7;
+}
