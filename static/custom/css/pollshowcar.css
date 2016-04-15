@@ -1,18 +1,18 @@
 .carousel {
-    height: 500px;
+    height: 550px;
     margin-bottom: 10px;
 }
 
 .carousel-caption {
     z-index: 10;
-    min-height: 500px;
+    min-height: 550px;
     right:10%;
     left:10%;
 }
 
 /* Declare heights because of positioning of img element */
 .carousel .item {
-    height: 500px;
+    height:550px;
     background-color: transparent;
 }
 

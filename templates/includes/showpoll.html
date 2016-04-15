@@ -10,7 +10,7 @@
             <li data-target="#myCarousel" data-slide-to="{{ forloop.counter0 }}" id="indi_{{ forloop.counter0 }}"></li>
     {% endfor %}
     </ol>
-    
+    <input type="hidden" id="questions_count" value={{ poll_data|length }}>
     <div class="carousel-inner" role="listbox">
     {% for question_dict in poll_data %}
         {% if forloop.first %}

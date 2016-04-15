@@ -1,7 +1,7 @@
-var graphColorArray = ["#edd9c0","#c9d8c5","#a8b6bf","#9ad3de","#89bdd3","#3fb0ac","#e6cf8b","#22264b"]
+var graphColorArray = ["#edd9c0","#c5d5cb","#e3e0cf","#dbc3d0","#c9d8c5","#9ad3de","#a8b6bf","#89bdd3","#c9c9c9","#e1e8f0"]
 $(document).ready(function() {
     $(".carousel").carousel({
-        interval: 9000
+        interval: 10000
     }); 
     
     // Get context with jQuery - using jQuery's .get() method.
@@ -137,7 +137,18 @@ $(document).ready(function() {
             onAnimationComplete: function(){}
         }
     
-    /* Draw Charts */
+    //color the list
+    chartsCount = $("#questions_count").attr("value");
+    for (j = 0; j < chartsCount; j++) {
+        chartId = "#chart_" + j;
+        optionCountId = chartId + "_option_count";
+        optionCount = $(optionCountId).attr("value");
+        var data = []
+        for (i = 0; i < optionCount; i++) { 
+           listId = "#list_" + j + "_" + i;
+           $(listId).attr("style","background:" + graphColorArray[i] + ";")
+        }
+    }
     
     //draw first slide chart
     chartId = "#chart_0";
@@ -145,8 +156,6 @@ $(document).ready(function() {
     optionCount = $(optionCountId).attr("value");
     var data = []
     for (i = 0; i < optionCount; i++) { 
-       listId = "#list_0_" + i;
-       $(listId).attr("style","background:" + graphColorArray[i] + ";")
        optionId = chartId + "_" + i;
        optionValue = $(optionId).attr("value");
        var a = {value : optionValue, color:graphColorArray[i]}
@@ -164,8 +173,6 @@ $(document).ready(function() {
         optionCount = $(optionCountId).attr("value");
         var data = []
         for (i = 0; i < optionCount; i++) { 
-           listId = "#list_" + currentIndex + "_" + i;
-           $(listId).attr("style","background:" + graphColorArray[i] + ";")
            optionId = chartId + "_" + i;
            optionValue = $(optionId).attr("value");
            var a = {value : optionValue, color:graphColorArray[i]}
