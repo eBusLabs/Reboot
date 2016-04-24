@@ -47,7 +47,7 @@ def insert_poll(user, jsonDict):
     
     return True
 
-def draft_poll(user):
+def draft_poll(user, start_date, end_date):
     poll_dict = OrderedDict()
     draft_rows = poll_model.objects.filter(
                                         poll_start__isnull=True,
@@ -100,15 +100,15 @@ def delete_poll(poll_id):
     return True
 
 def get_polls_for_user(user):
-        poll_available = poll_model.objects.filter(poll_end__gte=date.today())
-        poll_list = {}
+        poll_available = poll_model.objects.filter(poll_end__gte=date.today()).order_by("-id")
+        poll_dict =  OrderedDict()
         for poll in poll_available:
             for grp in poll_group_model.objects.filter(poll_name=poll.id):
                 if user.groups.filter(name=grp).exists():
                     if not is_poll_taken(user, poll.id):
-                        poll_list[str(poll.id)] = poll.poll_name
+                        poll_dict[str(poll.id)] = poll.poll_name
                         break
-        return poll_list
+        return poll_dict
     
 def get_questions(poll_id):
     question_list = question_model.objects.filter(poll_name=poll_id)
@@ -154,27 +154,25 @@ def is_poll_taken(user, poll_id):
         return False
         
 def poll_result(user, start_date, end_date):
-    poll_list = {}
+    poll_dict = OrderedDict()
     try:
-        polls = poll_model.objects.filter(poll_end__lt=end_date, poll_end__gte=start_date)
+        polls = poll_model.objects.filter(poll_end__lt=end_date, poll_end__gte=start_date).order_by("-id")
         for poll in polls:
             for grp in poll_group_model.objects.filter(poll_name=poll.id):
                 if user.groups.filter(name=grp).exists():
-                    poll_list[poll.id] = poll.poll_name
+                    poll_dict[poll.id] = poll.poll_name
                     break
-            
-        
     except:
         #logtrace
-        poll_list = {}
-    return poll_list
+        poll_dict = {}
+    return poll_dict
 
 def is_member_poll_group(user, pollid):
     is_allowed = False
     poll = poll_model.objects.get(id=pollid)
     if poll:
         for group in poll_group_model.objects.filter(poll_name=poll.id):
-            if user.groups.filter(name=group).exists():
+            if not False in (user.groups.filter(name=group).exists(), is_poll_taken(user, pollid)):
                 is_allowed = True
                 break
     else:
@@ -199,6 +197,36 @@ def collect_poll_data(pollid):
         question_dict[row.question] = option_list
         poll_data.append(question_dict)
     return poll_data
+
+def get_current_polls(user, start_date, end_date):
+    poll_dict = OrderedDict()
+    try:
+        polls = poll_model.objects.filter(
+                                        created_by=user,
+                                        poll_start__gte=start_date, 
+                                        poll_end__lte=end_date
+                                        ).order_by("-id")
+        for poll in polls:
+            poll_dict[poll.id] = poll.poll_name
+    except:
+        #logtrace
+        poll_dict = {}
+    return poll_dict
+
+def get_completed_polls(user, start_date, end_date):
+    poll_dict = OrderedDict()
+    try:
+        polls = poll_model.objects.filter(
+                                        created_by=user,
+                                        poll_start__gte=start_date, 
+                                        poll_end__lte=end_date
+                                        ).order_by("-id")
+        for poll in polls:
+            poll_dict[poll.id] = poll.poll_name
+    except:
+        #logtrace
+        poll_dict = {}
+    return poll_dict
 
 
 

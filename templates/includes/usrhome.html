@@ -2,7 +2,6 @@
 <script src="{{ STATIC_URL }}custom/js/usrhome.js"></script>
 
 <div style="margin-top: 10px;" id="polllist">
-{% if poll_dict %}
 {% for k, v in poll_dict.items %}
  <div class="row" style="margin-top: 5px;">
     <div class="col-md-10 col-sm-12 col-xs-12">
@@ -20,9 +19,6 @@
     </div>
  </div>
 {% endfor %} 
-{% else %}
-<div class="alert alert-info" role="alert"><strong>Congrats!!</strong> No pollssss</div>
-{% endif %}
 </div>
 
 <form method="POST" action="" id="takePoll">

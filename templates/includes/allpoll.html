@@ -1,7 +1,7 @@
 <ul class="nav nav-tabs">
   <li role="presentation" {% if alldraft  or alldraft_open   %} class="active" {% endif %}><a href="/allpoll/draft/">Drafts</a></li>
-  <li role="presentation" {% if allcurrent   %} class="active" {% endif %}><a href="/allpoll/current/">Current Polls</a></li>
-  <li role="presentation" {% if allcompleted %} class="active" {% endif %} ><a href="/allpoll/completed/">Completed Polls</a></li>
+  <li role="presentation" {% if allcurrent or allcurrent_show  %} class="active" {% endif %}><a href="/allpoll/current/">Current Polls</a></li>
+  <li role="presentation" {% if allcompleted or allcompleted_show %} class="active" {% endif %} ><a href="/allpoll/completed/">Completed Polls</a></li>
 </ul>
 {% if alldraft %}
 {% include "includes/alldraft.html" %}
@@ -15,6 +15,14 @@
 {% include "includes/allcurrent.html" %}
 {% endif %}
 
+{% if allcurrent_show %}
+{% include "includes/showpoll.html" %}
+{% endif %}
+
 {% if allcompleted %}
 {% include "includes/allcompleted.html" %}
+{% endif %}
+
+{% if allcompleted_show %}
+{% include "includes/showpoll.html" %}
 {% endif %}

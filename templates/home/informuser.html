@@ -7,13 +7,11 @@
 {% block body %}
 {% include "includes/nav.html" %}
 <div class="col-sm-3 col-md-2 sidebar">
-{% with action="lastpoll"%}
 {% if polladmin %}
 {% include "includes/nav_side_admin.html" %}
 {% else %} 
 {% include "includes/nav_side.html" %}
 {% endif %}
-{% endwith %}
 </div>
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main" style="margin-top: 10px" id="cont">
 {% include "includes/inform_user.html" %}

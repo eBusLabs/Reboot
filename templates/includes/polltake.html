@@ -1,5 +1,5 @@
 <link href="{{ STATIC_URL }}custom/css/polltake.css" rel="stylesheet">
-<link href="{{ STATIC_URL }}custom/css/polltakecar.css" rel="stylesheet">
+<link href="{{ STATIC_URL }}custom/css/car.css" rel="stylesheet">
 <script src="{{ STATIC_URL }}custom/js/polltake.js"></script>
 <form id="pollTaken" action="/uhome/submit/" method="post">
 {% csrf_token %}
@@ -19,25 +19,27 @@
         {% endif %}
             <div class="container">
                 <div class="carousel-caption">
-                    <div class="panel panel-primary" id="panel_{{ forloop.counter0 }}">
-                        <div class="panel-heading">
-                            <h3 class="panel-title" style="text-align: left;">
-                                <span class="glyphicon glyphicon-arrow-right"></span>{{ field.label }}
-                            </h3>
-                        </div><!-- panel heading end -->
-                            <div class="panel-body">
-                            {% for option in field %}
-                                <ul class="list-group">
-                                    <li class="list-group-item">
-                                        <div class="radio" style="text-align: left;">
-                                            {{option}}
-                                        </div>
-                                    </li>
-                                </ul>
-                            {% endfor %}
-                            </div>
-                        <!-- panel body end -->
-                    </div><!-- panel end -->
+                    <div id="ex" style="display: table-cell;vertical-align: middle;"> <!-- to align vertically -->
+                        <div class="panel panel-primary" id="panel_{{ forloop.counter0 }}">
+                            <div class="panel-heading">
+                                <h3 class="panel-title" style="text-align: left;">
+                                    <span class="glyphicon glyphicon-arrow-right"></span>{{ field.label }}
+                                </h3>
+                            </div><!-- panel heading end -->
+                                <div class="panel-body">
+                                {% for option in field %}
+                                    <ul class="list-group">
+                                        <li class="list-group-item">
+                                            <div class="radio" style="text-align: left;">
+                                                {{option}}
+                                            </div>
+                                        </li>
+                                    </ul>
+                                {% endfor %}
+                                </div>
+                            <!-- panel body end -->
+                        </div><!-- panel end -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -52,7 +54,7 @@
       </a>
 </div>
 </div>
-<div class="row" style="text-align: center;">
+<div class="row" style="text-align: center;margin-top: -3%;">
 <button id="btnPollTake" class="btn btn-lg btn-primary" type="submit">Submit</button>
 </div>
 </form>

@@ -18,6 +18,8 @@ $(document).ready(function() {
 		// set from value
 		$("#draftaction").val("D");
 		$("#pollid").val(id);
+		console.log($("#sdate").val());
+		console.log($("#edate").val());
 	});
 	
 	$("#draftform").submit(function(event) {

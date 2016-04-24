@@ -1,1 +1,11 @@
-give list of last 6 months completed polls
+<form method="POST" action="" id="dateform">
+{% csrf_token %}
+{% include "includes/datepicker.html" %}
+</form>
+{% include "includes/allpollcommon.html" %}
+<form method="POST" action="/allpoll/completed/action" id="draftform">
+{% csrf_token %}
+    <input id="draftaction" type="hidden" name="draftaction" value=""/>
+    <input id="pollid" type="hidden" name="pollid" value=""/>
+    <input id="poll_name" type="hidden" name="poll_name" value=""/>
+</form>

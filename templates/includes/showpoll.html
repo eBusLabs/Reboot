@@ -1,9 +1,9 @@
-<link href="{{ STATIC_URL }}custom/css/pollshowcar.css" rel="stylesheet">
+<link href="{{ STATIC_URL }}custom/css/car.css" rel="stylesheet">
 <link href="{{ STATIC_URL }}custom/css/lastpolls.css" rel="stylesheet">
 <script src="{{ STATIC_URL }}others/js/Chart.min.js"></script>
 <script src="{{ STATIC_URL }}custom/js/showpoll.js"></script>
 {% load reboot_extras %}
-<div id="myCarousel" class="carousel slide" data-ride="carousel" style="margin-top: 50px;">
+<div id="myCarousel" class="carousel slide" data-ride="carousel">
     <!-- Indicators -->
     <ol class="carousel-indicators">
     {% for question in poll_data %}
@@ -11,7 +11,7 @@
     {% endfor %}
     </ol>
     <input type="hidden" id="questions_count" value={{ poll_data|length }}>
-    <div class="carousel-inner" role="listbox">
+    <div class="carousel-inner" role="listbox" style="">
     {% for question_dict in poll_data %}
         {% if forloop.first %}
         <div class="item active">
@@ -21,6 +21,7 @@
     {% for question, options_list in question_dict.items %}
             <div class="container">
                 <div class="carousel-caption">
+                <div id="ex" style="display: table-cell;vertical-align: middle;"> <!-- to align vertically -->
                     <div class="panel panel-primary" style="background-color: #ECECEA; border-color:#028482;">
                         <div class="panel-heading" style="background: #028482; border-color:#028482;color: whitesmoke;">
                             <h3 class="panel-title" style="text-align: left;">
@@ -54,6 +55,7 @@
                                 </div>
                             </div><!-- panel body end -->
                     </div><!-- panel end -->
+                    </div>
                 </div>
             </div>
       </div>

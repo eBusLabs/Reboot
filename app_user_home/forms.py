@@ -39,11 +39,11 @@ class TakePollForm(forms.Form):
             count = count + 1
 
 
-class ShowUserPollResultForm(forms.Form):
+class LinkedDatePickerForm(forms.Form):
     def __init__(self, *args, **kwargs):
         self.start_date = kwargs.pop("start_date")
         self.end_date =kwargs.pop("end_date")
-        super(ShowUserPollResultForm, self).__init__(*args, **kwargs)
+        super(LinkedDatePickerForm, self).__init__(*args, **kwargs)
         attrs = {"class":"form-control", "value":self.start_date}
         self.fields["sdate"] = forms.DateField(widget = get_date_widget(attrs))
         attrs["value"] = self.end_date

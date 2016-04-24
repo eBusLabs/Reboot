@@ -13,33 +13,34 @@ $(document).ready(function() {
     $("#sdate").datetimepicker(
     {
         format:"YYYY-MM-DD",
-        maxDate: moment().format("YYYY-MM-DD")
+        maxDate:moment().format("YYYY-MM-DD"),
     });
     
     $("#edate").datetimepicker(
     {
         format:"YYYY-MM-DD",
-        maxDate: moment().format("YYYY-MM-DD")
+        maxDate:moment().format("YYYY-MM-DD")
+    });
+    
+    //link start date and end date window
+    $("#sdate").on("dp.change", function (e) {
+        $("#edate").data("DateTimePicker").minDate(e.date);
+    });
+    $("#edate").on("dp.change", function (e) {
+        $("#sdate").data("DateTimePicker").maxDate(e.date);
     });
     
     
-    //action on click list
-    $( ".list-group-item" ).on( "click", function() {
-        var id = $(this).attr("id").replace("pn","");
-        $("#pollid").val(id);
-        console.log($("#pollid").val());
-    }); 
-    
-    $("#listpoll").submit(function(event) {
-        if (formCheckListPoll() === true) {
+    $("#dateform").submit(function(event) {
+        if (formCheckDates() === true) {
             //continue
         }   else {
-            console.log("allnotok");
+            console.log("invalid dates");
             event.preventDefault();
         }
     });
     
-    function formCheckListPoll() {
+    function formCheckDates() {
         allOk = true;
         try {
             //check if start date is valid date
@@ -68,29 +69,10 @@ $(document).ready(function() {
                 allOk = false;
             }
         } catch(err) {
-            console.log("Error validating form showpoll : \n" + err);
+            console.log("Error validating form : \n" + err);
             return false;
         }
         
         return allOk;
     }
-    
-    $("#showpoll").submit(function(event) {
-        if (formCheckShowPoll() === true) {
-            console.log("allok");
-        }   else {
-            console.log("allnotok");
-            event.preventDefault();
-        }
-    });
-    
-    function formCheckShowPoll() {
-        try {
-            return true;
-        } catch(err) {
-            console.log("Error validating form showpoll : \n" + err);
-            return false;
-        }
-    }
-    
 });

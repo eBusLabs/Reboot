@@ -3,46 +3,10 @@
 <script src="{{ STATIC_URL }}custom/js/usr_completed_polls.js"></script>
 <script src="{{ STATIC_URL }}others/js/moment.min.js"></script>
 <script src="{{ STATIC_URL }}others/js/bootstrap-datetimepicker.min.js"></script>
-<form method="POST" action="" id="listpoll">
+<form method="POST" action="" id="dateform">
 {% csrf_token %}
-{% if form.errors %}
-<div class="row col-md-12" >
-    <h4><span class="label label-danger">Invalid Date Entered</span></h4>
-</div>
-{% endif %}
-<div class="row" style="margin-top: 15px; margin-bottom: 20px;">
-    <div class="col-md-6 col-sm-6 col-xs-12">
-        <div class="input-group">
-            <label class="form-control pollLabel">Click the poll to see result</label>
-        </div>
-    </div>
-    <div class="col-md-2 col-sm-2 col-xs-12">
-        <div class="input-group date" id="sdate">
-            {{ form.sdate }}
-            <span class="input-group-addon"> 
-                <span class="glyphicon glyphicon-calendar"></span>
-            </span>
-        </div>
-    </div>
-    <div class="col-md-2 col-sm-2 col-xs-12">
-        <div class="input-group date" id="edate">
-            {{ form.edate }}
-            <span class="input-group-addon"> 
-                <span class="glyphicon glyphicon-calendar"></span>
-            </span>
-        </div>
-    </div>
-    
-    <div class="col-md-2 col-sm-2 col-xs-12">
-        <div class="input-group">
-            <button type="submit" class="form-control" id="dateButton">
-                <span class="glyphicon glyphicon-refresh glass" style="color:green;"></span>
-            </button>
-        </div>
-    </div>
-</div>
+{% include "includes/datepicker.html" %}
 </form>
-
 <div id="polllist">
 {% if poll_dict %}
 {% for k, v in poll_dict.items %}

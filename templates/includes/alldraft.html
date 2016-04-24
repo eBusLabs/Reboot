@@ -1,44 +1,9 @@
-<link href="{{ STATIC_URL }}custom/css/alldraft.css" rel="stylesheet">
-<script src="{{ STATIC_URL }}custom/js/alldraft.js"></script>
-<div style="margin-top: 10px;" id="polllist">
-{% if poll_dict %}
-{% for k, v in poll_dict.items %}
- <div class="row" style="margin-top: 5px;">
-    <div class="col-md-10 col-sm-12 col-xs-12">
-        <ul id="pn{{ k }}" class="list-group-item pollFont">{{ v }}</ul>
-    </div>
-    <div class="col-md-1 col-sm-4 col-xs-4">
-        <ul class="list-group-item buttonWidth">
-            <button id="open{{ k }}" 
-                    type="submit" 
-                    form="draftform" 
-                    class="openButton">
-              <span style="color: green;" class="glyphicon glyphicon-open" data-toggle="tooltip" title="Open this poll."></span>
-            </button>
-        </ul>
-    </div>
-    <div class="col-md-1 col-sm-4 col-xs-4">
-        <ul class="list-group-item buttonWidth">
-            <button id="del{{ k }}" 
-                    form="draftform"
-                    type="submit" 
-                    class="removeButton">
-                    <span style="color: red;" class="glyphicon glyphicon-minus-sign" data-toggle="tooltip" title="Delete this poll."></span>
-            </button>
-        </ul>
-    </div>
- </div>
-{% endfor %} 
-{% else %}
-<div class="row" style="margin-top: 25px;">
-        <div class="col-md-8 col-sm-8 col-xs-10 alert alert-info col-md-offset-2 col-sm-offset-2 col-xs-offset-1" role="alert" style="text-align: center;">
-            <strong>No Polls Here !!</strong> Create a new poll, click Create Poll Button
-        </div>
-</div>
-{% endif %}
-</div>
-
-<form method="POST" action="/allpoll/draft/" id="draftform">
+<form method="POST" action="" id="dateform">
+{% csrf_token %}
+{% include "includes/datepicker.html" %}
+</form>
+{% include "includes/allpollcommon.html" %}
+<form method="POST" action="/allpoll/draft/action/" id="draftform">
 {% csrf_token %}
     <input id="draftaction" type="hidden" name="draftaction" value=""/>
     <input id="pollid" type="hidden" name="pollid" value=""/>
