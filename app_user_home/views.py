@@ -3,12 +3,12 @@ import json
 
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.http.response import HttpResponseRedirect
 from django.shortcuts import render
 
 from app_poll_core.sqlop import *  # @UnusedWildImport
 
 from .forms import *  # @UnusedWildImport
-from app_poll_core.sqlop import get_current_polls
 
 
 def poll_admin_check(user):
@@ -37,18 +37,6 @@ def inform_user(request, level, head, msg_list, **kwargs):
                                                     "msg_list":msg_list,
                                                     })
     
-def default_page(request):
-    is_poll_admin = request.user.groups.filter(name="polladmin").exists()
-    poll_dict = get_polls_for_user(request.user)
-    if  poll_dict:
-        return render(request, "home/userhometab.html", {
-                                                "user":request.user,
-                                                "polladmin":is_poll_admin,
-                                                "poll_dict":poll_dict,
-                                        })
-    else:
-        return inform_user(request, "I", "No Polls", ["for you",],action="home")
-
 
 @login_required
 def user_home_view(request):
@@ -105,6 +93,7 @@ def user_home_poll_submit_view(request):
 @login_required
 def user_lastpoll_view(request):#show poll taken by user in list
     is_poll_admin = request.user.groups.filter(name="polladmin").exists()
+    label_text = "Click Poll to See Result"
     #post means user requested specific date
     if request.method == "POST":
         postdic = request.POST
@@ -117,7 +106,8 @@ def user_lastpoll_view(request):#show poll taken by user in list
                                                     "user":request.user,
                                                     "polladmin":is_poll_admin,
                                                     "poll_dict":poll_dict,
-                                                    "form":form
+                                                    "form":form,
+                                                    "label_text":label_text,
                                                     })
         else:
             return render(request, "home/lastpolltab.html", {
@@ -125,6 +115,7 @@ def user_lastpoll_view(request):#show poll taken by user in list
                                                         "polladmin":is_poll_admin,
                                                         "poll_dict":None,
                                                         "form":form,
+                                                        "label_text":label_text,
                                                         })
     else:
         #by default we are showing 3 months poll result
@@ -136,7 +127,8 @@ def user_lastpoll_view(request):#show poll taken by user in list
                                                     "user":request.user,
                                                     "polladmin":is_poll_admin,
                                                     "poll_dict":poll_dict,
-                                                    "form":form
+                                                    "form":form,
+                                                    "label_text":label_text,
                                                     })
         
 @login_required
@@ -154,7 +146,8 @@ def user_showpoll_view(request):#show poll result to user in graphical view
         else:
             return inform_user(request, "E", "ERROR", ["You are not authorized to view this poll"],action="lastpoll")
     else:
-        return inform_user(request, "W", "Click a Button Hulk", ["Not a post request"],action="lastpoll")
+        #show home page
+        return HttpResponseRedirect("/uhome")
     
 @login_required
 def user_resetpwd_view(request):
@@ -278,44 +271,13 @@ def admin_create_polls_view(request):
 @login_required
 @user_passes_test(poll_admin_check)
 def admin_all_polls_draft_view(request):
-    if request.method == "POST":
-        postdic = request.POST
-        start_date = postdic["sdate"]
-        end_date = postdic["edate"]
-        form = LinkedDatePickerForm(request.POST, start_date=start_date, end_date=end_date)
-        if form.is_valid():
-            poll_dict = draft_poll(request.user, start_date, end_date)
-            return render(request,"home/alltab.html", {
-                                                    "polladmin":True,
-                                                    "user":request.user,
-                                                    "form":form,
-                                                    "label_text":"Select a poll",
-                                                    "alldraft":True, 
-                                                    "poll_dict":poll_dict,
-                                                    })
-        else:
-            return render(request,"home/alltab.html", {
-                                                    "polladmin":True,
-                                                    "user":request.user,
-                                                    "form":form,
-                                                    "label_text":"Select a poll",
-                                                    "alldraft":True, 
-                                                    "poll_dict":None,
-                                                    })
-    else: 
-        #by default we are showing last 3 months data
-        end_date = date.today();
-        start_date = (end_date.replace(day=1) - timedelta(days=89)).replace(day=1)
-        poll_dict = draft_poll(request.user, start_date, end_date)
-        form = LinkedDatePickerForm(start_date=start_date, end_date=end_date)
-        return render(request,"home/alltab.html", {
-                                                    "polladmin":True,
-                                                    "user":request.user,
-                                                    "form":form,
-                                                    "label_text":"Select a poll",
-                                                    "alldraft":True, 
-                                                    "poll_dict":poll_dict,
-                                                    })
+    poll_dict = draft_poll(request.user)
+    return render(request,"home/alltab.html", {
+                                                "polladmin":True,
+                                                "user":request.user,
+                                                "alldraft":True, 
+                                                "poll_dict":poll_dict,
+                                                })
         
 @login_required
 @user_passes_test(poll_admin_check)
@@ -344,7 +306,7 @@ def admin_all_polls_draft_open_or_delete_view(request):
             else:
                 return inform_user(request, "E", "Error", ["Database Error"],action="allpoll")
     else:
-            return inform_user(request, "E", "Error", ["This request must be a post request"],action="allpoll")
+        return HttpResponseRedirect("uhome")
         
         
 @login_required
@@ -406,43 +368,13 @@ def admin_all_polls_draft_view_open(request):
 @login_required
 @user_passes_test(poll_admin_check)
 def admin_all_polls_current_view(request):
-    if request.method == "POST":
-        postdic = request.POST
-        start_date = postdic["sdate"]
-        end_date = postdic["edate"]
-        form = LinkedDatePickerForm(request.POST, start_date=start_date, end_date=end_date)
-        if form.is_valid():
-            poll_dict = get_current_polls(request.user, start_date, end_date)
-            return render(request,"home/alltab.html", {
-                                                    "polladmin":True,
-                                                    "user":request.user,
-                                                    "form":form,
-                                                    "allcurrent":True, 
-                                                    "poll_dict":poll_dict,
-                                                    "label_text":"Select a poll",
-                                                    })
-        else:
-            return render(request,"home/alltab.html", {
-                                                    "polladmin":True,
-                                                    "user":request.user,
-                                                    "form":form,
-                                                    "allcurrent":True, 
-                                                    "poll_dict":None,
-                                                    "label_text":"Select a poll",
-                                                    })
-    else:
-        end_date = date.today();
-        start_date = (end_date.replace(day=1) - timedelta(days=89)).replace(day=1)
-        form = LinkedDatePickerForm(start_date=start_date, end_date=end_date)
-        poll_dict = get_current_polls(request.user, start_date, end_date)
-        return render(request,"home/alltab.html", {
-                                                    "polladmin":True,
-                                                    "user":request.user,
-                                                    "form":form,
-                                                    "allcurrent":True, 
-                                                    "poll_dict":poll_dict,
-                                                    "label_text":"Select a poll",
-                                                    })
+    poll_dict = get_current_polls(request.user)
+    return render(request,"home/alltab.html", {
+                                                "polladmin":True,
+                                                "user":request.user,
+                                                "allcurrent":True, 
+                                                "poll_dict":poll_dict,
+                                                })
 
 
 @login_required
@@ -468,12 +400,54 @@ def admin_all_polls_current_see_or_delete_view(request):
                 return inform_user(request, "E", "Error", ["Database Error"],action="allpoll")
     else:
         #show home page
-        return default_page(request)
+        return HttpResponseRedirect("/uhome")
 
     
 @login_required
 @user_passes_test(poll_admin_check)
 def admin_all_polls_completed_view(request):
+    label_text = "View Result or Delete Poll"
+    if request.method == "POST":
+        postdic = request.POST
+        start_date = postdic["sdate"]
+        end_date = postdic["edate"]
+        form = LinkedDatePickerForm(request.POST, start_date=start_date, end_date=end_date)
+        if form.is_valid():
+            poll_dict = get_completed_polls(request.user, start_date, end_date)
+            return render(request,"home/alltab.html", {
+                                                    "polladmin":True,
+                                                    "user":request.user,
+                                                    "form":form,
+                                                    "allcompleted":True, 
+                                                    "poll_dict":poll_dict,
+                                                    "label_text":label_text,
+                                                    })
+        else:
+            return render(request,"home/alltab.html", {
+                                                    "polladmin":True,
+                                                    "user":request.user,
+                                                    "form":form,
+                                                    "allcompleted":True, 
+                                                    "poll_dict":None,
+                                                    "label_text":label_text,
+                                                    })
+    else:
+        end_date = date.today();
+        start_date = (end_date.replace(day=1) - timedelta(days=89)).replace(day=1)
+        form = LinkedDatePickerForm(start_date=start_date, end_date=end_date)
+        poll_dict = get_completed_polls(request.user, start_date, end_date)
+        return render(request,"home/alltab.html", {
+                                                    "polladmin":True,
+                                                    "user":request.user,
+                                                    "form":form,
+                                                    "allcompleted":True, 
+                                                    "poll_dict":poll_dict,
+                                                    "label_text":label_text,
+                                                    })
+        
+@login_required
+@user_passes_test(poll_admin_check)
+def admin_all_polls_completed_action_view(request):
     if request.method == "POST":
         postdic = request.POST
         action = postdic["draftaction"]
@@ -489,40 +463,12 @@ def admin_all_polls_completed_view(request):
         if action == "D":
             if delete_poll(poll_id):
                 return inform_user(request, "O", "Success", ["Poll deleted successfully"],action="allpoll")
-
+  
             else:
                 return inform_user(request, "E", "Error", ["Database Error"],action="allpoll")
-    else:
-        poll_dict = get_completed_polls(request.user)
-        return render(request,"home/alltab.html", {
-                                                    "polladmin":True,
-                                                    "user":request.user,
-                                                    "allcompleted":True, 
-                                                    "poll_dict":poll_dict,
-                                                    })
-        
-@login_required
-@user_passes_test
-def admin_all_polls_completed_see_or_delete_view(request):
-    if request.method == "POST":
-        postdic = request.POST
-        action = postdic["draftaction"]
-        poll_id = postdic["pollid"]
-        if action == "O":
-            poll_data = collect_poll_data(poll_id)
-            return render(request, "home/alltab.html", {
-                                                    "user":request.user,
-                                                    "polladmin":True,
-                                                     "allcurrent_show":True, 
-                                                    "poll_data":poll_data,
-                                                    })
-        if action == "D":
-            if delete_poll(poll_id):
-                return inform_user(request, "O", "Success", ["Poll deleted successfully"],action="allpoll")
-
-            else:
-                return inform_user(request, "E", "Error", ["Database Error"],action="allpoll")
-            
+              
     else:
         #if request is not post show user home page
-        return default_page(request)
+        return HttpResponseRedirect("/uhome")
+    
+

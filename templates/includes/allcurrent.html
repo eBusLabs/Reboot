@@ -1,9 +1,5 @@
-<form method="POST" action="" id="dateform">
-{% csrf_token %}
-{% include "includes/datepicker.html" %}
-</form>
 {% include "includes/allpollcommon.html" %}
-<form method="POST" action="/allpoll/current/action" id="draftform">
+<form method="POST" action="action/" id="draftform">
 {% csrf_token %}
     <input id="draftaction" type="hidden" name="draftaction" value=""/>
     <input id="pollid" type="hidden" name="pollid" value=""/>

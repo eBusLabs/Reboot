@@ -47,7 +47,7 @@ def insert_poll(user, jsonDict):
     
     return True
 
-def draft_poll(user, start_date, end_date):
+def draft_poll(user):
     poll_dict = OrderedDict()
     draft_rows = poll_model.objects.filter(
                                         poll_start__isnull=True,
@@ -156,10 +156,13 @@ def is_poll_taken(user, poll_id):
 def poll_result(user, start_date, end_date):
     poll_dict = OrderedDict()
     try:
-        polls = poll_model.objects.filter(poll_end__lt=end_date, poll_end__gte=start_date).order_by("-id")
+        polls = poll_model.objects.filter(
+                                        poll_start__gte=start_date, 
+                                        poll_end__lt=end_date
+                                        ).order_by("-id")
         for poll in polls:
             for grp in poll_group_model.objects.filter(poll_name=poll.id):
-                if user.groups.filter(name=grp).exists():
+                if (user.groups.filter(name=grp).exists() and is_poll_taken(user, poll.id)):
                     poll_dict[poll.id] = poll.poll_name
                     break
     except:
@@ -198,19 +201,17 @@ def collect_poll_data(pollid):
         poll_data.append(question_dict)
     return poll_data
 
-def get_current_polls(user, start_date, end_date):
+def get_current_polls(user):
     poll_dict = OrderedDict()
     try:
         polls = poll_model.objects.filter(
                                         created_by=user,
-                                        poll_start__gte=start_date, 
-                                        poll_end__lte=end_date
+                                        poll_end__gte=date.today()
                                         ).order_by("-id")
         for poll in polls:
             poll_dict[poll.id] = poll.poll_name
     except:
-        #logtrace
-        poll_dict = {}
+        poll_dict = {} #logtrace
     return poll_dict
 
 def get_completed_polls(user, start_date, end_date):
@@ -219,7 +220,7 @@ def get_completed_polls(user, start_date, end_date):
         polls = poll_model.objects.filter(
                                         created_by=user,
                                         poll_start__gte=start_date, 
-                                        poll_end__lte=end_date
+                                        poll_end__lt=end_date
                                         ).order_by("-id")
         for poll in polls:
             poll_dict[poll.id] = poll.poll_name
