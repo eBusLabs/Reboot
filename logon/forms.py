@@ -22,10 +22,11 @@ class Registration(forms.Form):
     passwordb = forms.CharField(10, 4, label="Confirm Password : ", widget=form_widget.get_pwd_widget(attrs))
     
 class Logon(forms.Form):
-    attrs = {"class":"form-control", "placeholder": "Enter User ID", "required":"", "autofocus":""}
+    attrs = {"class":"form-control", "placeholder": "user id", "required":"", "autofocus":""}
     uid = forms.CharField(30, 4, label="User ID : ", widget=form_widget.get_text_widget(attrs))
     del attrs["autofocus"]
     
-    attrs["placeholder"] = "Enter Password"
+    attrs["placeholder"] = "password"
     pwd = forms.CharField(10, 4, label="Password : ", widget=form_widget.get_pwd_widget(attrs))
+
     

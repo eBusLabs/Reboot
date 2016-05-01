@@ -1,13 +1,20 @@
 import datetime
 
 from django.contrib.auth import authenticate, login, logout
-from django.http.response import HttpResponseRedirect, HttpResponse
+from django.contrib.auth.decorators import login_required
+from django.core.mail import send_mail
 from django.shortcuts import render
 
+from generic.get_random import get_random_alphanumeric_string
 from logon.forms import *  # @UnusedWildImport
 from logon.sqlop import register_user
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+import logging
+from django.conf.global_settings import EMAIL_HOST_USER
+from django.http.response import HttpResponseRedirect
 
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 # Create your views here.
 def current_time(request):
@@ -99,12 +106,56 @@ def logon_view(request):
         return render(request,"logon/logon.html",{"form":form,})
 
 def request_password_view(request):
-    from generic.get_random import get_random_alphanumeric_string
-    from django.core.mail import send_mail
-    pwd = get_random_alphanumeric_string(6)
-    send_mail('Subject here', 'Here is the message.', 'emltstng@gmail.com',
-    ['grbgct@gmail.com',], fail_silently=False)
-    return HttpResponse(pwd)
+    if request.method == "POST":
+        postdic = request.POST
+        username = postdic.get("username")
+        try:
+            user = User.objects.get(username=username)
+        except:
+            user = None
+            
+        if user:
+            try:
+                pwd = get_random_alphanumeric_string(6)
+                send_mail(
+                        'Your new password',                                            #subject
+                        'Use below password for login, change it after login\n' + pwd,  #message
+                        EMAIL_HOST_USER,                                                #from email
+                        [user.email,],                                                  #to email
+                        fail_silently=False)                                            #log exception if fail
+                #we are here means mail is send successfully, let reset user pwd
+                user.set_password(pwd)
+                user.save()
+                msg = "Hey !! Password send to your email"
+                url = "/logon/"
+                bt = "Take me to logon"
+                return render(request,"generic/success.html",{
+                                                        "msg":msg,
+                                                        "url":url,
+                                                        "bt":bt,
+                                                        })
+            except:
+                logger.exception("Error sending email")
+                msg = "Oops !! Error sending email"
+                url = "/logon/requestpwd/"
+                bt = "Try Again"
+                return render(request,"generic/failure.html",{
+                                                        "msg":msg,
+                                                        "url":url,
+                                                        "bt":bt,
+                                                        })
+                
+        else:
+            msg = "Oops !! This user do not exist"
+            url = "/logon/"
+            bt = "Take me to logon"
+            return render(request,"generic/failure.html",{
+                                                        "msg":msg,
+                                                        "url":url,
+                                                        "bt":bt,
+                                                        })
+    else:
+        return render(request, "logon/forgetpwd.html")
 
 @login_required    
 def logout_view(request):

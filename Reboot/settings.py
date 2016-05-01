@@ -17,9 +17,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-# written in hushhush.py
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -141,25 +138,29 @@ LOGGING = {
         },
     },
     'loggers': {
-#         'django': {
-#             'handlers':['file'],
-#             'propagate': True,
-#             'level':'DEBUG',
-#         },
+        'django': {
+            'handlers':['debugfile'],
+            'propagate': True,
+            'level':'DEBUG',
+        },
         'Reboot': {
             'handlers': ['debugfile',],
+            'propagate': True,
             'level': APP_LOG_LEVEL,
         },      
         'logon': {
             'handlers': ['debugfile',],
+            'propagate': True,
             'level': APP_LOG_LEVEL,
         },
         'app_user_home': {
             'handlers': ['debugfile',],
+            'propagate': True,
             'level': APP_LOG_LEVEL,
         },
         'app_user_core': {
             'handlers': ['debugfile',],
+            'propagate': True,
             'level': APP_LOG_LEVEL,
         },             
                    
@@ -170,5 +171,14 @@ LOGGING = {
 LOGIN_URL = '/logon/'
 
 from .hushhush import *  # @UnusedWildImport
-#key
-#email settings
+#hushhush.py contain secret data, create a hushhush.py and uncomment below line and change as per your need
+#SECRET_KEY = '$[-)@J?Sn:C/!#E}PxHWH~4EkO`8OADtw:,7qPm#{>yFL'_58]'
+
+#Email Settings
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = '587'
+# EMAIL_HOST_USER = 'your email'
+# DEFAULT_FROM_EMAIL =  EMAIL_HOST_USER
+# EMAIL_HOST_PASSWORD = 'your password'
+# EMAIL_USE_TLS = True
