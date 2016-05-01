@@ -13,3 +13,10 @@ body {
 .margin10 {
   padding:10px;
 }
+
+.glass {
+-webkit-appearance: none;
+outline: none;
+border: 0;
+background: transparent;        
+}

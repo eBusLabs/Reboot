@@ -18,7 +18,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'g!hx(xvja&obf2_*gs*flcnw7v#o)#6=nayhh_nz&y-iz+t&0$'
+# written in hushhush.py
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -60,14 +60,14 @@ WSGI_APPLICATION = 'Reboot.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
-
+ 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-
+ 
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
 
@@ -168,3 +168,7 @@ LOGGING = {
 
 #Change default login url
 LOGIN_URL = '/logon/'
+
+from .hushhush import *  # @UnusedWildImport
+#key
+#email settings

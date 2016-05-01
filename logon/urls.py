@@ -8,5 +8,6 @@ logonurl = [
     url(r'^now/$',current_time),
     url(r'^registration/$',registration_view),
     url(r'^logon/$',logon_view),
+    url(r'^logon/requestpwd/$',request_password_view),
     url(r"^logout/",logout_view)
 ]

@@ -8,9 +8,9 @@
 *.log
 *.sqlite3
 *.tern-project
+hushhush.py
 # don't push these folder
 __pycache__
-#migrations
 
 # OS generated files #
 ######################

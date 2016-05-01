@@ -1,7 +1,7 @@
 import datetime
 
 from django.contrib.auth import authenticate, login, logout
-from django.http.response import HttpResponseRedirect
+from django.http.response import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 
 from logon.forms import *  # @UnusedWildImport
@@ -98,6 +98,14 @@ def logon_view(request):
         form = Logon()
         return render(request,"logon/logon.html",{"form":form,})
 
+def request_password_view(request):
+    from generic.get_random import get_random_alphanumeric_string
+    from django.core.mail import send_mail
+    pwd = get_random_alphanumeric_string(6)
+    send_mail('Subject here', 'Here is the message.', 'emltstng@gmail.com',
+    ['grbgct@gmail.com',], fail_silently=False)
+    return HttpResponse(pwd)
+
 @login_required    
 def logout_view(request):
     msg = "See you soon " + request.user.first_name
@@ -109,7 +117,5 @@ def logout_view(request):
                                                 "url":url,
                                                 "bt":bt,
                                                  })
-@login_required
-def change_password_view(request):
-    pass
+
     
